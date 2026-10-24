@@ -20,6 +20,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore complete English strings (Nexus branding)
+        run: |
+          set -e
+          STRINGS=app_pojavlauncher/src/main/res/values/strings.xml
+          # Full upstream string catalog (fork's copy was truncated and broke AAPT)
+          curl -fsSL -o "$STRINGS" \
+            https://raw.githubusercontent.com/PojavLauncherTeam/PojavLauncher/v3_openjdk/app_pojavlauncher/src/main/res/values/strings.xml
+          # Nexus branding
+          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">Nexus Launcher (Minecraft: Java Edition for Android)<\/string>/' "$STRINGS"
+          sed -i 's/<string name="app_short_name">.*<\/string>/<string name="app_short_name">Nexus Launcher<\/string>/' "$STRINGS"
+          sed -i 's/PojavLauncher has unexpectedly crashed/Nexus Launcher has unexpectedly crashed/' "$STRINGS"
+          # Remove broken partial extras from earlier commits if present
+          rm -f app_pojavlauncher/src/main/res/values/strings_part*.xml
+          rm -f app_pojavlauncher/src/main/res/values/strings_nexus*.xml
+          # Locale packs contain non-positional multi-% formats that fail modern AAPT;
+          # English catalog is enough for debug APK builds.
+          find app_pojavlauncher/src/main/res -maxdepth 1 -type d -name 'values-*' -print -exec rm -rf {} +
+          echo "strings.xml bytes: $(wc -c < "$STRINGS")"
+          grep -c 'name="customctrl_addbutton"' "$STRINGS"
+          grep -c 'name="main_play"' "$STRINGS"
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -102,7 +123,6 @@ jobs:
 
       - name: Build APK without runtime
         run: |
-          # Safe even if dirs missing
           rm -rf app_pojavlauncher/src/main/assets/components/jre \
                  app_pojavlauncher/src/main/assets/components/jre-new \
                  app_pojavlauncher/src/main/assets/components/jre-21

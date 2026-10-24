@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="main_play">Play</string>
+    <string name="main_share_logs">Share log file</string>
+    <string name="main_install_jar_file">Execute a .jar</string>
+    <string name="main_add_account">Add account</string>
+    <string name="main_login_done">Login done</string>
+    <string name="create_profile">Create new profile</string>
+    <string name="no_saved_accounts">No saved accounts</string>
+    <string name="tasks_ongoing">Tasks are in progress, please wait</string>
+    <string name="discord_invite" translatable="false">https://discord.com/invite/aenk3EUvER</string>
+    <string name="mcl_button_discord">Discord</string>
+    <string name="mcl_button_open_directory">Open game directory</string>
+    <string name="lazy_service_default_title">Nexus Foreground Service</string>
+    <string name="storage_required">Nexus Launcher requires external storage to be attached. Please reconnect it and restart the app.</string>
+    <string name="notification_game_runs">The game is running!</string>
+    <string name="notification_terminate">Terminate</string>
+    <string name="mc_download_failed">Failed to download Minecraft! This could be due to bad network connection, incorrectly placed files, etc..</string>
+    <string name="modpack_install_notification_title">Nexus Modpack Installer</string>
+    <string name="notification_permission_dialog_title">Notification permission</string>
+    <string name="notification_permission_dialog_text">Nexus Launcher requires a permission to post notifications to prevent game/modpack downloads from stopping when you leave the app. Without this permission, Android may shut down your downloads when you put Nexus Launcher in background mode.</string>
+    <string name="notification_permission_toast">You can always change your decision in Settings</string>
+    <string name="local_login_bad_username_title">Unsuitable username</string>
+    <string name="local_login_bad_username_text">The username must be between 3–16 characters long, and must only contain latin letters, arabic numerals and underscores.</string>
+    <string name="microsoft_login_retry_later">Too many requests, please try again later.</string>
+    <string name="minecraft_not_owned">It seems like this account does not have a Minecraft profile. If you have Xbox Game Pass, please log in on https://minecraft.net/ and set it up.</string>
+    <string name="xerr_unknown">Unknown Xbox Live API error %d</string>
+    <string name="xerr_no_account">You don\'t seem to have an Xbox Live account. Please log in once on https://minecraft.net/ and try again.</string>
+    <string name="xerr_adult_verification">An adult needs to verify your account.</string>
+    <string name="xerr_child">Your account is a child account, and needs to be added into a Family in order to log in.</string>
+    <string name="xerr_not_available">Xbox Live is not available in your country</string>
+    <string name="quick_setting_title">Quick settings</string>
+</resources>

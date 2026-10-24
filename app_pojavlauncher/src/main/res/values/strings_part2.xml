@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="control_viewout">Log output</string>
+    <string name="control_adebug">Input Debug</string>
+    <string name="control_customkey">Send custom keycode</string>
+    <string name="import_control_label">Import controls</string>
+    <string name="import_control_invalid_file">Invalid or corrupted file</string>
+    <string name="import_control_import_button">import controls</string>
+    <string name="import_control_verifying_file">File is being verified, please wait and try again…</string>
+    <string name="import_control_invalid_name">Invalid name or file already exists</string>
+    <string name="import_control_done">Importation done</string>
+    <string name="control_more3">...</string>
+    <string name="control_more4">....</string>
+    <string name="customctrl_toggle">Toggleable</string>
+    <string name="customctrl_size">Size</string>
+    <string name="customctrl_mapping">Mapping</string>
+    <string name="customctrl_orientation">Orientation</string>
+    <string name="customctrl_background_color">Background color</string>
+    <string name="customctrl_corner_radius">Corner radius</string>
+    <string name="customctrl_stroke_width">Stroke width</string>
+    <string name="customctrl_stroke_color">Stroke color</string>
+    <string name="customctrl_button_opacity">Opacity</string>
+    <string name="customctrl_addbutton">Add a button</string>
+    <string name="customctrl_addbutton_drawer">Add a drawer</string>
+    <string name="customctrl_addbutton_joystick">Add a joystick</string>
+    <string name="customctrl_addsubbutton">Add a sub-button</string>
+    <string name="customctrl_selectdefault">Select default control</string>
+    <string name="customctrl_export">Export as array</string>
+    <string name="main_share_logs">Share log file</string>
+    <string name="main_install_jar_file">Execute a jar file</string>
+    <string name="main_play">Play</string>
+    <string name="autoram_info_msg">Memory set to %d MB</string>
+    <string name="mcl_setting_check_libraries">Check libraries after downloading</string>
+    <string name="mcl_setting_check_libraries_subtitle">This option will enable library checking after download. If a library is broken, it will be redownloaded.</string>
+    <string name="dl_library_sha_fail">Library %s is damaged and will be redownloaded</string>
+    <string name="dl_library_sha_unknown">Library %s can\'t be checked, assuming okay</string>
+    <string name="dl_library_sha_pass">Library %s is fine and usable</string>
+    <string name="mcl_disable_gestures">Disable gestures</string>
+    <string name="mcl_disable_gestures_subtitle">Disables gestures, such as hold to break block, and tap to place a block.</string>
+    <string name="mcl_disable_swap_hand">Disable double tap swap hand</string>
+    <string name="mcl_disable_swap_hand_subtitle">Disabling double tap will change the used block from left to right hand.</string>
+    <string name="mcl_setting_title_mousespeed">Mouse Speed</string>
+    <string name="mcl_setting_subtitle_mousespeed">Change the speed of the virtual mouse.</string>
+    <string name="customctrl_passthru">Mouse pass-through</string>
+    <string name="customctrl_swipeable">Swipeable</string>
+    <string name="customctrl_forward_lock">Forward lock</string>
+    <string name="customctrl_absolute_tracking">Absolute finger tracking</string>
+    <string name="customctrl_editor_exit">Exit</string>
+    <string name="customctrl_editor_exit_msg">Exit without saving?</string>
+    <string name="memory_warning_msg" formatted="false">The current amount of free RAM (%d) is lower than allocated RAM (%d), which may lead to crashes. Change the allocation if the game crashes.</string>
+    <string name="address_memory_warning_msg" formatted="false">Current amount of free address space (%d MB) is lower than allocated RAM (%d MB), which may lead to crashes. Change the allocation if the game crashes.</string>
+    <string name="mcl_button_open_directory">Open game directory</string>
+    <string name="mcl_button_website">Website</string>
+    <string name="mcl_button_discord">Discord</string>
+</resources>

@@ -138,7 +138,10 @@ public final class ServerController {
         if (!p.serverJar(p.resolveRoot(ServerPaths.serversRoot())).isFile()) {
             p.runtimeState = ServerProfile.State.INSTALLING;
             notifyState(p);
-            ServerInstaller.install(p, msg -> emitLog(msg));
+            ServerInstaller.install(p, new ServerInstaller.Progress() {
+                @Override public void onStatus(String message) { emitLog(message); }
+                @Override public void onProgress(long current, long total) {}
+            });
         }
         ServerInstaller.ensureProperties(p);
 

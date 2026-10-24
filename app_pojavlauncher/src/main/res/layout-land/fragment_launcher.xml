@@ -62,6 +62,10 @@
                     android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1"
                     android:drawableStart="@drawable/ic_discord" android:text="@string/mcl_button_discord" android:textColor="@color/nexus_text_primary"/>
             </LinearLayout>
+            <com.kdt.mcgui.LauncherMenuButton android:id="@+id/server_host_button" style="@style/LauncherMenuButton"
+                android:layout_width="match_parent" android:layout_height="40dp"
+                android:text="Servers" android:textColor="@color/nexus_orange"
+                android:layout_marginTop="6dp"/>
             <com.kdt.mcgui.LauncherMenuButton android:id="@+id/custom_control_button" style="@style/LauncherMenuButton"
                 android:layout_width="match_parent" android:layout_height="36dp" android:drawableStart="@drawable/ic_menu_custom_controls"
                 android:text="@string/mcl_option_customcontrol" android:textColor="@color/nexus_text_secondary"/>

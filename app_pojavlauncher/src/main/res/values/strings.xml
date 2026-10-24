@@ -1,1 +1,181 @@
-SEE_FILE_/home/workdir/artifacts/strings_nexus_full.xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="app_name">Nexus Launcher (Minecraft: Java Edition for Android)</string>
+
+    <string name="app_short_name">Nexus Launcher</string>
+
+    <string name="login_online_username_hint">Username</string>
+
+    <string name="login_online_login_label">Login</string>
+
+    <string name="hint_control_mapping">"Touch the top center cogwheel to open the context menu ⚙\nTap a button to customize: edit, resize, remove, or change its keybind."</string>
+
+    <string name="warning_remove_account">This account will be removed!</string>
+
+    <string name="alerttitle_installmod">Select a mod installer</string>
+
+    <string name="error_fatal">Nexus Launcher has unexpectedly crashed</string>
+
+    <string name="error_no_version">No version!</string>
+
+    <string name="error_show_more">Show more</string>
+
+    <string name="error_show_less">Show less</string>
+
+    <string name="toast_permission_denied">The read/write to storage permission is required!</string>
+
+    <string name="toast_optifine_success">Install successful</string>
+
+    <string name="mcl_tab_wiki">Wiki</string>
+
+    <string name="mcl_launch_cleancache">Cleaning cache files</string>
+
+    <string name="mcl_launch_downloading">Downloading %s</string>
+
+    <string name="mcl_launch_downloading_progress">"Downloading %s (%.2f MB / %.2f MB)"</string>
+
+    <string name="mcl_launch_download_assets">Preparing to download resources</string>
+
+    <string name="mcl_options">Options</string>
+
+    <string name="mcl_option_customcontrol">Custom controls</string>
+
+    <string name="mcl_setting_title_use_surface_view">Use alternate surface rendering</string>
+
+    <string name="mcl_setting_subtitle_use_surface_view">May help performance in GPU bound scenarios.</string>
+
+    <string name="mcl_setting_title_ignore_notch">Ignore notch</string>
+
+    <string name="mcl_setting_subtitle_ignore_notch">Ignores the notch and extends the screen under it.\nGives you a more immersive experience.</string>
+
+    <string name="mcl_setting_title_resolution_scaler">Resolution Scaler</string>
+
+    <string name="mcl_setting_subtitle_resolution_scaler">Allows you to decrease the game resolution. 100% is full resolution.</string>
+
+    <string name="mcl_setting_title_longpresstrigger">Trigger long press delay</string>
+
+    <string name="mcl_setting_subtitle_longpresstrigger">Change long press trigger delay for destroying blocks and dropping items.</string>
+
+    <string name="mcl_setting_title_buttonscale">Control buttons scaling</string>
+
+    <string name="mcl_setting_subtitle_buttonscale">Upscale them if the buttons are too small.</string>
+
+    <string name="mcl_setting_title_mousescale">Mouse scaling</string>
+
+    <string name="mcl_setting_subtitle_mousescale">Change the size of the virtual mouse.</string>
+
+    <string name="mcl_setting_title_javaargs">JVM Launch arguments</string>
+
+    <string name="mcl_setting_subtitle_javaargs">Be careful, this may make game crash if modified without knowledge.</string>
+
+    <string name="mcl_setting_category_renderer">Renderer</string>
+
+    <string name="mcl_setting_renderer_gles2_4">Holy GL4ES - (all versions, fast)</string>
+
+    <string name="mcl_setting_renderer_vulkan_zink">Zink (Vulkan) - (all versions, mid)</string>
+
+    <string name="mcl_setting_renderer_ltw">LTW (OpenGL ES 3) - 1.17+ only</string>
+
+    <string name="mcl_setting_veroption_release">Release</string>
+
+    <string name="mcl_setting_veroption_snapshot">Snapshot</string>
+
+    <string name="mcl_setting_veroption_oldalpha">Old-alpha</string>
+
+    <string name="mcl_setting_veroption_oldbeta">Old-beta</string>
+
+    <string name="mcl_setting_java_sandbox">Sandbox .jar execution</string>
+
+    <string name="mcl_setting_java_sandbox_subtitle">Control the availability of the sandbox security manager when executing a .jar file.</string>
+
+    <string name="mcl_version_clone">Clone</string>
+
+    <string name="global_edit">Edit</string>
+
+    <string name="global_error">Error</string>
+
+    <string name="global_load">Load</string>
+
+    <string name="global_name">Name</string>
+
+    <string name="global_remove">Remove</string>
+
+    <string name="global_clone">Clone</string>
+
+    <string name="global_restart">Restart</string>
+
+    <string name="global_save">Save</string>
+
+    <string name="global_unpacking">Unpacking %s</string>
+
+    <string name="global_error_field_empty">This field can\'t be empty</string>
+
+    <string name="global_waiting">Wait</string>
+
+    <string name="global_select">Select</string>
+
+    <string name="global_retry">Retry</string>
+
+    <string name="global_default">Default</string>
+
+    <string name="mcn_exit_title">Application/Game exited with code %d, check latestlog.txt for more details.</string>
+
+    <string name="mcn_signal_title">Application/Game aborted by fatal signal %d, check latestlog.txt for more details.</string>
+
+    <string name="mcn_exit_confirm">Are you sure want to force close?</string>
+
+    <string name="mcn_check_fail_vulkan_support">Zink (Vulkan) renderer is not supported on this device!</string>
+
+    <string name="control_chat">Chat</string>
+
+    <string name="control_debug">Debug</string>
+
+    <string name="control_primary">Pri</string>
+
+    <string name="control_secondary">Sec</string>
+
+    <string name="control_shift">◇</string>
+
+    <string name="control_inventory">Inv</string>
+
+    <string name="control_up">▲</string>
+
+    <string name="control_left">◀</string>
+
+    <string name="control_right">▶</string>
+
+    <string name="control_down">▼</string>
+
+    <string name="control_jump">⬛</string>
+
+    <string name="control_thirdperson">3rd</string>
+
+    <string name="control_listplayers">Tab</string>
+
+    <string name="control_mouse">Mouse</string>
+
+    <string name="control_mouseoff">Mouse: off</string>
+
+    <string name="control_mouseon">Mouse: on </string>
+
+    <string name="control_forceclose">Force close</string>
+
+    <string name="control_viewout">Log output</string>
+
+    <string name="control_adebug">Input Debug</string>
+
+    <string name="control_customkey">Send custom keycode</string>
+
+    <string name="import_control_label">Import controls</string>
+
+    <string name="import_control_invalid_file">Invalid or corrupted file</string>
+
+    <string name="import_control_import_button">import controls</string>
+
+    <string name="import_control_verifying_file">File is being verified, please wait and try again…</string>
+
+    <string name="import_control_invalid_name">Invalid name or file already exists</string>
+
+    <string name="import_control_done">Importation done</string>
+</resources>

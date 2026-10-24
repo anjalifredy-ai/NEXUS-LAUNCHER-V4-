@@ -66,6 +66,17 @@ public class MainMenuFragment extends Fragment {
 
         mOpenDirectoryButton.setOnClickListener((v)-> openPath(v.getContext(), getCurrentProfileDirectory(), false));
 
+        View.OnClickListener openServers = v ->
+                Tools.swapFragment(requireActivity(), ServerManagerFragment.class, ServerManagerFragment.TAG, null);
+        View serverBtn = view.findViewById(R.id.nav_mods);
+        if (serverBtn != null) serverBtn.setOnClickListener(openServers);
+        View serverHostBtn = view.findViewById(R.id.server_host_button);
+        if (serverHostBtn != null) serverHostBtn.setOnClickListener(openServers);
+        View navSettings = view.findViewById(R.id.nav_settings);
+        if (navSettings != null) {
+            navSettings.setOnClickListener(v ->
+                Tools.swapFragment(requireActivity(), net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment.class, "SETTINGS_FRAGMENT", null));
+        }
 
         mNewsButton.setOnLongClickListener((v)->{
             Tools.swapFragment(requireActivity(), GamepadMapperFragment.class, GamepadMapperFragment.TAG, null);

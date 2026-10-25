@@ -9,34 +9,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="12dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Performance Lab"
-            android:textColor="@color/nexus_orange"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/perf_metrics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/nexus_text_secondary"
-            android:textSize="13sp"
-            android:paddingBottom="12dp"/>
-
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Performance Lab" android:textColor="@color/nexus_accent"
+            android:textSize="20sp" android:textStyle="bold" android:paddingBottom="8dp"/>
+        <TextView android:id="@+id/perf_metrics" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textColor="@color/nexus_text_secondary"
+            android:textSize="13sp" android:paddingBottom="12dp"/>
         <Button android:id="@+id/perf_btn_refresh" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:text="Refresh metrics"/>
         <Button android:id="@+id/perf_btn_low" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:text="Apply Low preset (note only)"/>
+            android:layout_height="wrap_content" android:text="Low heap recommendation"/>
         <Button android:id="@+id/perf_btn_balanced" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:text="Apply Balanced preset (note only)"/>
+            android:layout_height="wrap_content" android:text="Balanced heap recommendation"/>
         <Button android:id="@+id/perf_btn_performance" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:text="Apply Performance preset (note only)"/>
+            android:layout_height="wrap_content" android:text="Performance heap recommendation"/>
         <Button android:id="@+id/perf_btn_servers" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:text="Open Server Hosting"/>
+        <Button android:id="@+id/perf_btn_diag" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Open Diagnostics"/>
         <Button android:id="@+id/perf_btn_back" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:text="Back to Home"/>
     </LinearLayout>

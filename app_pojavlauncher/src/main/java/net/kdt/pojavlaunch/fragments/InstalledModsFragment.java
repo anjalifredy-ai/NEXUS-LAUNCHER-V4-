@@ -29,7 +29,9 @@ public class InstalledModsFragment extends Fragment {
     private TextView mHeader;
     private ListView mList;
     private final List<String> mNames = new ArrayList<>();
+    private final List<Boolean> mDisabled = new ArrayList<>();
     private File mModsDir;
+    private File mDisabledDir;
 
     public InstalledModsFragment() {
         super(R.layout.fragment_installed_mods);
@@ -45,23 +47,30 @@ public class InstalledModsFragment extends Fragment {
 
         if (refresh != null) refresh.setOnClickListener(v -> reload());
         if (browse != null) browse.setOnClickListener(v ->
-                Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
-                        SearchModFragment.newInstance("mod").getArguments()));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("mod").getArguments()));
         if (back != null) back.setOnClickListener(v -> Tools.backToMainMenu(requireActivity()));
 
         mList.setOnItemLongClickListener((parent, v, position, id) -> {
             if (position < 0 || position >= mNames.size() || mModsDir == null) return true;
             String name = mNames.get(position);
-            File f = new File(mModsDir, name);
-            if (!f.isFile()) return true;
+            boolean wasDisabled = mDisabled.get(position);
             try {
-                if (name.endsWith(".disabled")) {
-                    String n = name.substring(0, name.length() - ".disabled".length());
-                    if (!f.renameTo(new File(mModsDir, n))) throw new Exception("rename failed");
-                    toast("Enabled: " + n);
+                if (wasDisabled) {
+                    File src = new File(mDisabledDir, name);
+                    File dst = new File(mModsDir, name);
+                    if (dst.exists()) throw new Exception("Target already exists: " + name);
+                    if (!src.renameTo(dst)) throw new Exception("Enable failed");
+                    toast("Enabled: " + name + " (restart game to apply)");
                 } else {
-                    if (!f.renameTo(new File(mModsDir, name + ".disabled"))) throw new Exception("rename failed");
-                    toast("Disabled: " + name);
+                    if (mDisabledDir == null) throw new Exception("No disabled dir");
+                    if (!mDisabledDir.exists() && !mDisabledDir.mkdirs())
+                        throw new Exception("Cannot create disabled/");
+                    File src = new File(mModsDir, name);
+                    File dst = new File(mDisabledDir, name);
+                    if (dst.exists()) throw new Exception("Already disabled: " + name);
+                    if (!src.renameTo(dst)) throw new Exception("Disable failed");
+                    toast("Disabled: " + name + " (restart game to apply)");
                 }
                 reload();
             } catch (Exception e) {
@@ -75,25 +84,44 @@ public class InstalledModsFragment extends Fragment {
 
     private void reload() {
         mModsDir = resolveModsDir();
+        mDisabledDir = mModsDir != null ? new File(mModsDir, "disabled") : null;
         mNames.clear();
+        mDisabled.clear();
         if (mModsDir != null && mModsDir.isDirectory()) {
             File[] files = mModsDir.listFiles((dir, name) -> {
                 String n = name.toLowerCase();
-                return n.endsWith(".jar") || n.endsWith(".jar.disabled") || n.endsWith(".disabled");
+                return n.endsWith(".jar") && !new File(dir, name).isDirectory();
             });
             if (files != null) {
                 Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
-                for (File f : files) mNames.add(f.getName());
+                for (File f : files) {
+                    mNames.add(f.getName());
+                    mDisabled.add(false);
+                }
             }
+        }
+        if (mDisabledDir != null && mDisabledDir.isDirectory()) {
+            File[] files = mDisabledDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".jar"));
+            if (files != null) {
+                Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+                for (File f : files) {
+                    mNames.add(f.getName());
+                    mDisabled.add(true);
+                }
+            }
+        }
+        List<String> labels = new ArrayList<>();
+        for (int i = 0; i < mNames.size(); i++) {
+            labels.add((mDisabled.get(i) ? "[OFF] " : "[ON]  ") + mNames.get(i));
         }
         if (mHeader != null) {
             String path = mModsDir != null ? mModsDir.getAbsolutePath() : "(no profile)";
             mHeader.setText("Installed mods (" + mNames.size() + ")\n" + path
-                    + "\nLong-press to enable/disable");
+                    + "\nLong-press toggle · mods/disabled/ · restart game after change");
         }
         if (mList != null) {
             mList.setAdapter(new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_list_item_1, mNames));
+                    android.R.layout.simple_list_item_1, labels));
         }
     }
 

@@ -3,71 +3,366 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/nexus_bg"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:clipToPadding="false">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="28dp">
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Server Hosting" android:textColor="@color/nexus_text_primary"
-            android:textSize="20sp" android:textStyle="bold" android:paddingBottom="8dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NEXUS  /  SERVER STUDIO"
+            android:textColor="@color/nexus_orange"
+            android:textSize="11sp"
+            android:letterSpacing="0.12"
+            android:textStyle="bold" />
 
-        <TextView android:id="@+id/server_status" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="State: STOPPED" android:textColor="@color/nexus_orange" android:paddingBottom="4dp"/>
-        <TextView android:id="@+id/server_ram_info" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="@color/nexus_text_secondary" android:textSize="12sp" android:paddingBottom="4dp"/>
-        <TextView android:id="@+id/server_lan_info" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="@color/nexus_text_secondary" android:textSize="12sp" android:paddingBottom="4dp"/>
-        <TextView android:id="@+id/server_public_info" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="@color/nexus_text_muted" android:textSize="12sp" android:paddingBottom="8dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Server Hosting"
+            android:textColor="@color/nexus_text_primary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-        <Spinner android:id="@+id/server_profile_spinner" android:layout_width="match_parent" android:layout_height="40dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Run and manage a Minecraft Java server on this device."
+            android:textColor="@color/nexus_text_secondary"
+            android:textSize="13sp" />
 
-        <EditText android:id="@+id/server_name" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:hint="Server name" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
-        <EditText android:id="@+id/server_version" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:hint="MC version e.g. 1.20.4" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            <EditText android:id="@+id/server_port" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:hint="Port" android:inputType="number" android:textColor="@color/nexus_text_primary"/>
-            <EditText android:id="@+id/server_heap" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:hint="Heap MB" android:inputType="number" android:textColor="@color/nexus_text_primary"/>
-            <EditText android:id="@+id/server_max_players" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:hint="Players" android:inputType="number" android:textColor="@color/nexus_text_primary"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/nexus_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SERVER STATUS"
+                android:textColor="@color/nexus_text_muted"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:id="@+id/server_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="State: STOPPED"
+                android:textColor="@color/nexus_orange"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/nexus_bg" />
+
+            <TextView
+                android:id="@+id/server_ram_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/nexus_text_secondary"
+                android:textSize="12sp"
+                android:paddingBottom="5dp" />
+
+            <TextView
+                android:id="@+id/server_lan_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/nexus_text_secondary"
+                android:textSize="12sp"
+                android:paddingBottom="5dp" />
+
+            <TextView
+                android:id="@+id/server_public_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/nexus_text_muted"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <CheckBox android:id="@+id/server_eula" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="I accept the Minecraft EULA (aka.ms/MinecraftEULA)" android:textColor="@color/nexus_text_primary"/>
-        <CheckBox android:id="@+id/server_use_paper" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Use Paper (if builds exist for this version)" android:textColor="@color/nexus_text_primary"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="YOUR SERVERS"
+            android:textColor="@color/nexus_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06" />
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="6dp">
-            <Button android:id="@+id/server_btn_create" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Create"/>
-            <Button android:id="@+id/server_btn_save" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Save"/>
-            <Button android:id="@+id/server_btn_delete" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Delete"/>
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            <Button android:id="@+id/server_btn_install" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Install"/>
-            <Button android:id="@+id/server_btn_start" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Start"/>
-            <Button android:id="@+id/server_btn_stop" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Stop"/>
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            <Button android:id="@+id/server_btn_public" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Make Public"/>
-            <Button android:id="@+id/server_btn_refresh_ram" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Refresh RAM"/>
+        <Spinner
+            android:id="@+id/server_profile_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/nexus_card"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@color/nexus_card"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SERVER IDENTITY"
+                android:textColor="@color/nexus_orange"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <EditText
+                android:id="@+id/server_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:hint="Server name"
+                android:singleLine="true"
+                android:textColor="@color/nexus_text_primary"
+                android:textColorHint="@color/nexus_text_muted" />
+
+            <EditText
+                android:id="@+id/server_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Minecraft version (e.g. 1.21.1)"
+                android:singleLine="true"
+                android:textColor="@color/nexus_text_primary"
+                android:textColorHint="@color/nexus_text_muted" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="PORT  /  HEAP MB  /  PLAYER SLOTS"
+                android:textColor="@color/nexus_text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/server_port"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="25565"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textColor="@color/nexus_text_primary"
+                    android:textColorHint="@color/nexus_text_muted" />
+
+                <EditText
+                    android:id="@+id/server_heap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:hint="RAM MB"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textColor="@color/nexus_text_primary"
+                    android:textColorHint="@color/nexus_text_muted" />
+
+                <EditText
+                    android:id="@+id/server_max_players"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:hint="Players"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textColor="@color/nexus_text_primary"
+                    android:textColorHint="@color/nexus_text_muted" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/server_eula"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="I accept the Minecraft EULA (aka.ms/MinecraftEULA)"
+                android:textColor="@color/nexus_text_primary"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/server_use_paper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Use Paper when a compatible build exists"
+                android:textColor="@color/nexus_text_primary"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Console" android:textColor="@color/nexus_text_primary" android:paddingTop="8dp"/>
-        <TextView android:id="@+id/server_console" android:layout_width="match_parent" android:layout_height="160dp"
-            android:background="@color/nexus_card" android:textColor="@color/nexus_text_secondary"
-            android:textSize="11sp" android:padding="8dp" android:scrollbars="vertical"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="SERVER CONTROLS"
+            android:textColor="@color/nexus_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06" />
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            <EditText android:id="@+id/server_command" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:hint="Command e.g. list" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
-            <Button android:id="@+id/server_btn_send" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Send"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/server_btn_create"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Create" />
+
+            <Button
+                android:id="@+id/server_btn_save"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Save" />
+
+            <Button
+                android:id="@+id/server_btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Delete" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/server_btn_install"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Install" />
+
+            <Button
+                android:id="@+id/server_btn_start"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="▶ Start" />
+
+            <Button
+                android:id="@+id/server_btn_stop"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Stop" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/server_btn_public"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Make Public" />
+
+            <Button
+                android:id="@+id/server_btn_refresh_ram"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Refresh RAM" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@color/nexus_card"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LIVE CONSOLE"
+                android:textColor="@color/nexus_orange"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <TextView
+                android:id="@+id/server_console"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/nexus_bg"
+                android:padding="10dp"
+                android:scrollbars="vertical"
+                android:textColor="@color/nexus_text_secondary"
+                android:textSize="11sp"
+                android:typeface="monospace" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/server_command"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Console command (e.g. list)"
+                    android:singleLine="true"
+                    android:textColor="@color/nexus_text_primary"
+                    android:textColorHint="@color/nexus_text_muted" />
+
+                <Button
+                    android:id="@+id/server_btn_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send" />
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

@@ -35,7 +35,7 @@ public class MinecraftServerProcess {
     private final AtomicBoolean ready = new AtomicBoolean(false);
     private final CopyOnWriteArrayList<LogListener> listeners = new CopyOnWriteArrayList<>();
     private final List<String> logBuffer = new ArrayList<>();
-    private static final int LOG_CAP = 400;
+    private static final int LOG_CAP = 500;
     private final AtomicReference<String> lastCrashHint = new AtomicReference<>(null);
 
     public MinecraftServerProcess(@NonNull ServerProfile profile, int heapMb,
@@ -57,22 +57,25 @@ public class MinecraftServerProcess {
         if (isRunning()) throw new Exception("Server already running");
         File root = profile.resolveRoot(ServerPaths.serversRoot());
         File jar = profile.serverJar(root);
-        if (!jar.isFile()) throw new Exception("Server jar missing. Install first: " + jar.getAbsolutePath());
+        if (!jar.isFile() || jar.length() < 1000)
+            throw new Exception("Server jar missing. Install the server first: " + jar.getAbsolutePath());
         File javaBin = new File(javaBinaryPath);
-        if (!javaBin.isFile()) throw new Exception("java binary missing: " + javaBinaryPath);
-        if (!javaBin.canExecute()) javaBin.setExecutable(true);
+        if (!javaBin.isFile())
+            throw new Exception("Java binary not found: " + javaBinaryPath);
+        //noinspection ResultOfMethodCallIgnored
+        javaBin.setExecutable(true);
 
         List<String> cmd = new ArrayList<>();
         cmd.add(javaBin.getAbsolutePath());
-        cmd.add("-Xms" + Math.min(256, heapMb) + "M");
+        cmd.add("-Xms" + Math.max(128, heapMb / 2) + "M");
         cmd.add("-Xmx" + heapMb + "M");
         cmd.add("-XX:+UseG1GC");
         cmd.add("-XX:+ParallelRefProcEnabled");
-        cmd.add("-XX:MaxGCPauseMillis=200");
         cmd.add("-Djava.awt.headless=true");
-        if (!extraJvmArgs.trim().isEmpty()) {
-            for (String a : extraJvmArgs.trim().split("\\s+")) {
-                if (!a.isEmpty() && !a.startsWith("-Xmx") && !a.startsWith("-Xms")) cmd.add(a);
+        cmd.add("-Djdk.lang.Process.launchMechanism=FORK");
+        if (extraJvmArgs != null && !extraJvmArgs.trim().isEmpty()) {
+            for (String part : extraJvmArgs.trim().split("\\s+")) {
+                if (!part.isEmpty()) cmd.add(part);
             }
         }
         cmd.add("-jar");
@@ -82,11 +85,15 @@ public class MinecraftServerProcess {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(root);
         pb.redirectErrorStream(true);
-        String ld = System.getenv("LD_LIBRARY_PATH");
-        File libDir = new File(javaBin.getParentFile().getParentFile(), "lib");
-        String extra = libDir.getAbsolutePath();
-        if (ld == null || ld.isEmpty()) pb.environment().put("LD_LIBRARY_PATH", extra);
-        else pb.environment().put("LD_LIBRARY_PATH", extra + ":" + ld);
+
+        File jreHome = javaBin.getParentFile() != null ? javaBin.getParentFile().getParentFile() : null;
+        String ld = buildLdLibraryPath(jreHome);
+        if (ld != null && !ld.isEmpty()) {
+            String existing = pb.environment().get("LD_LIBRARY_PATH");
+            if (existing == null || existing.isEmpty()) pb.environment().put("LD_LIBRARY_PATH", ld);
+            else pb.environment().put("LD_LIBRARY_PATH", ld + ":" + existing);
+        }
+        if (jreHome != null) pb.environment().put("JAVA_HOME", jreHome.getAbsolutePath());
 
         Log.i(TAG, "Starting: " + cmd);
         ready.set(false);
@@ -94,6 +101,7 @@ public class MinecraftServerProcess {
         process = pb.start();
         stdin = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
         running.set(true);
+
         Thread t = new Thread(this::readLoop, "nexus-server-log");
         t.setDaemon(true);
         t.start();
@@ -113,63 +121,105 @@ public class MinecraftServerProcess {
         waiter.start();
     }
 
+    private static String buildLdLibraryPath(@Nullable File jreHome) {
+        if (jreHome == null || !jreHome.isDirectory()) return null;
+        StringBuilder sb = new StringBuilder();
+        String[] rel = new String[] {
+                "lib", "lib/jli", "lib/server", "lib/client",
+                "lib/aarch64", "lib/arm", "lib/amd64", "lib/i386",
+                "jre/lib", "jre/lib/aarch64", "jre/lib/arm", "jre/lib/amd64"
+        };
+        for (String r : rel) {
+            File d = new File(jreHome, r);
+            if (d.isDirectory()) {
+                if (sb.length() > 0) sb.append(':');
+                sb.append(d.getAbsolutePath());
+            }
+        }
+        return sb.toString();
+    }
+
     public synchronized void sendCommand(@NonNull String command) throws Exception {
         if (!isRunning() || stdin == null) throw new Exception("Server is not running");
         stdin.write(command);
         if (!command.endsWith("\n")) stdin.write("\n");
         stdin.flush();
-        appendLog("> " + command.trim());
     }
 
-    public void stopGracefully(long timeoutMs) {
-        try { if (isRunning()) sendCommand("stop"); } catch (Exception ignored) {}
-        long deadline = System.currentTimeMillis() + timeoutMs;
+    public synchronized void stopGracefully(long timeoutMs) {
+        if (!isRunning()) {
+            running.set(false);
+            ready.set(false);
+            return;
+        }
+        try { sendCommand("stop"); } catch (Exception e) {
+            Log.w(TAG, "stop command failed", e);
+        }
+        long deadline = System.currentTimeMillis() + Math.max(3000, timeoutMs);
         while (isRunning() && System.currentTimeMillis() < deadline) {
-            try { Thread.sleep(200); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+            try { Thread.sleep(200); } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
         if (isRunning() && process != null) {
             process.destroy();
-            try { Thread.sleep(500); } catch (InterruptedException ignored) {}
-            if (process.isAlive()) process.destroyForcibly();
+            try { Thread.sleep(800); } catch (InterruptedException ignored) {}
+            if (isRunning()) process.destroyForcibly();
         }
         running.set(false);
         ready.set(false);
+        try { if (stdin != null) stdin.close(); } catch (Exception ignored) {}
+        stdin = null;
+        process = null;
     }
 
     private void readLoop() {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+        Process p = process;
+        if (p == null) return;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
                 appendLog(line);
-                detectSignals(line);
+                detectCrashHints(line);
+                if (!ready.get() && isReadinessLine(line)) {
+                    ready.set(true);
+                    for (LogListener l : listeners) {
+                        try { l.onServerReady(); } catch (Throwable ignored) {}
+                    }
+                }
+                for (LogListener l : listeners) {
+                    try { l.onLogLine(line); } catch (Throwable ignored) {}
+                }
             }
         } catch (Exception e) {
-            appendLog("[log reader ended: " + e.getMessage() + "]");
+            Log.e(TAG, "log reader ended", e);
         }
     }
 
-    private void detectSignals(String line) {
-        String lower = line.toLowerCase();
-        if (!ready.get() && (lower.contains("done (") || lower.contains("done!")
-                || (lower.contains("for help") && lower.contains("type")))) {
-            ready.set(true);
-            for (LogListener l : listeners) {
-                try { l.onServerReady(); } catch (Throwable ignored) {}
-            }
-        }
-        if (lower.contains("outofmemory") || lower.contains("java.lang.outofmemoryerror"))
-            lastCrashHint.set("OutOfMemoryError — lower heap or view-distance");
-        else if (lower.contains("address already in use") || lower.contains("bind exception"))
-            lastCrashHint.set("Port bind failed — change port or stop other server");
-        else if (lower.contains("unsupportedclassversionerror"))
-            lastCrashHint.set("Wrong Java version — install a newer MultiRT JRE");
+    private static boolean isReadinessLine(String line) {
+        String s = line.toLowerCase();
+        if (s.contains("done (") && s.contains("s)!")) return true;
+        if (s.contains("for help, type \"help\"")) return true;
+        if (s.contains("listening on")) return true;
+        if (s.contains("started the minecraft server")) return true;
+        return false;
+    }
+
+    private void detectCrashHints(String line) {
+        String s = line.toLowerCase();
+        if (s.contains("unsupportedclassversionerror") || s.contains("class file version"))
+            lastCrashHint.set("Java version too old for this server. Install a newer MultiRT JRE.");
+        else if (s.contains("outofmemoryerror") || s.contains("java.lang.outofmemory"))
+            lastCrashHint.set("Out of memory. Lower heap or close other apps.");
+        else if (s.contains("failed to bind to port") || s.contains("address already in use"))
+            lastCrashHint.set("Port already in use. Change port or stop the other process.");
+        else if (s.contains("you need to agree to the eula"))
+            lastCrashHint.set("EULA not accepted.");
     }
 
     private synchronized void appendLog(String line) {
         logBuffer.add(line);
         while (logBuffer.size() > LOG_CAP) logBuffer.remove(0);
-        for (LogListener l : listeners) {
-            try { l.onLogLine(line); } catch (Throwable ignored) {}
-        }
     }
 }

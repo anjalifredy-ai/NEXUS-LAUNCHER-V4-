@@ -180,6 +180,8 @@ public final class ServerController {
 
         ServerRuntimePicker.Choice rt = ServerRuntimePicker.pick(p);
         emitLog("Using runtime " + rt.name + " (Java " + rt.javaMajor + ") heap " + heap + "M");
+        p.preferredRuntimeName = rt.name;
+        p.requiredJavaMajor = rt.javaMajor;
 
         p.runtimeState = ServerProfile.State.STARTING;
         p.lastStartMs = System.currentTimeMillis();

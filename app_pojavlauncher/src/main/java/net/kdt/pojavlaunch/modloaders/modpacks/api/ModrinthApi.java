@@ -31,6 +31,7 @@ public class ModrinthApi implements ModpackApi{
     public SearchResult searchMod(SearchFilters searchFilters, SearchResult previousPageResult) {
         ModrinthSearchResult modrinthSearchResult = (ModrinthSearchResult) previousPageResult;
 
+        // Fixes an issue where the offset being equal or greater than total_hits is ignored
         if (modrinthSearchResult != null && modrinthSearchResult.previousOffset >= modrinthSearchResult.totalResultCount) {
             ModrinthSearchResult emptyResult = new ModrinthSearchResult();
             emptyResult.results = new ModItem[0];
@@ -39,6 +40,8 @@ public class ModrinthApi implements ModpackApi{
             return emptyResult;
         }
 
+
+        // Build the facets filters
         HashMap<String, Object> params = new HashMap<>();
         StringBuilder facetString = new StringBuilder();
         facetString.append("[");
@@ -58,63 +61,53 @@ public class ModrinthApi implements ModpackApi{
         JsonArray responseHits = response.getAsJsonArray("hits");
         if(responseHits == null) return null;
 
-        ModrinthSearchResult result = new ModrinthSearchResult();
-        result.previousOffset = params.containsKey("offset") ? ((Number)params.get("offset")).intValue() : 0;
-        result.totalResultCount = response.get("total_hits").getAsInt();
-        result.results = new ModItem[responseHits.size()];
-
-        for(int i=0; i<responseHits.size(); ++i){
+        ModItem[] items = new ModItem[responseHits.size()];
+        for(int i=0;i<responseHits.size();i++){
             JsonObject hit = responseHits.get(i).getAsJsonObject();
-            ModItem item = new ModItem(
-                    Constants.SOURCE_MODRINTH,
+            items[i] = new ModItem(Constants.SOURCE_MODRINTH,
                     hit.get("project_type").getAsString().equals("modpack"),
                     hit.get("project_id").getAsString(),
                     hit.get("title").getAsString(),
                     hit.get("description").getAsString(),
                     hit.get("icon_url").getAsString()
             );
-            result.results[i] = item;
         }
+        ModrinthSearchResult result = new ModrinthSearchResult();
+        result.results = items;
+        result.totalResultCount = response.get("total_hits").getAsInt();
+        result.previousOffset = params.containsKey("offset") ? ((Number)params.get("offset")).intValue() : 0;
         return result;
     }
 
     @Override
     public ModDetail getModDetails(ModItem item) {
-        JsonArray response = mApiHandler.get("project/" + item.id + "/version", JsonArray.class);
+        JsonArray response = mApiHandler.get("project/"+item.id+"/version", JsonArray.class);
         if(response == null) return null;
+        System.out.println(response);
         int responseSize = response.size();
-
         String[] names = new String[responseSize];
-        String[] mcVersions = new String[responseSize];
+        String[] mcNames = new String[responseSize];
         String[] urls = new String[responseSize];
         String[] hashes = new String[responseSize];
-
-        for(int i=0; i<responseSize; ++i){
+        for(int i=0;i<responseSize;i++){
             JsonObject version = response.get(i).getAsJsonObject();
+            JsonObject filesJsonObject = version.getAsJsonArray("files").get(0).getAsJsonObject();
             names[i] = version.get("name").getAsString();
-            JsonArray gameVersions = version.getAsJsonArray("game_versions");
-            StringBuilder gb = new StringBuilder();
-            for(int g=0;g<gameVersions.size();g++){
-                if(g>0) gb.append(", ");
-                gb.append(gameVersions.get(g).getAsString());
+            StringBuilder mcName = new StringBuilder();
+            for(Object object : version.getAsJsonArray("game_versions").asList()){
+                mcName.append(object.asString());
+                mcName.append("  ");
             }
-            mcVersions[i] = gb.toString();
-            JsonArray files = version.getAsJsonArray("files");
-            if(files.size() > 0){
-                JsonObject file0 = files.get(0).getAsJsonObject();
-                urls[i] = file0.get("url").getAsString();
-                JsonObject hashesObj = file0.getAsJsonObject("hashes");
-                hashes[i] = hashesObj != null && hashesObj.has("sha1") ? hashesObj.get("sha1").getAsString() : "";
-            } else {
-                urls[i] = "";
-                hashes[i] = "";
-            }
+            mcNames[i] = mcName.toString();
+            urls[i] = filesJsonObject.get("url").getAsString();
+            hashes[i] = filesJsonObject.getAsJsonObject("hashes").get("sha1").getAsString();
         }
-        return new ModDetail(item, names, mcVersions, urls, hashes);
+        return new ModDetail(item, names, mcNames, urls, hashes);
     }
 
     @Override
-    public ModLoader installMod(boolean isModpack, String modIdOrRest, ModDetail modDetail, int selectedVersion) throws IOException{
+    public ModLoader installMod(ModDetail modDetail, int selectedVersion) throws IOException{
+        //TODO considering only modpacks for now
         return ModpackInstaller.installModpack(modDetail, selectedVersion, this::installMrpack);
     }
 

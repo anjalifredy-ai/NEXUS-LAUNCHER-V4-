@@ -21,4 +21,11 @@ public final class ServerPaths {
     public static File javaBinary(String runtimeName) {
         return new File(Tools.MULTIRT_HOME + "/" + runtimeName + "/bin/java");
     }
+
+    public static boolean isSafeDirectoryName(String name) {
+        if (name == null || name.isEmpty()) return false;
+        if (name.contains("..") || name.contains("/") || name.contains("\\")) return false;
+        if (name.startsWith(".")) return false;
+        return name.matches("[A-Za-z0-9_\\-.]{1,64}");
+    }
 }

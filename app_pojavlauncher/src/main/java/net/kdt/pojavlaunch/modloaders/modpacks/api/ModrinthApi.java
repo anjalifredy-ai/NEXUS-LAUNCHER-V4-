@@ -31,7 +31,6 @@ public class ModrinthApi implements ModpackApi{
     public SearchResult searchMod(SearchFilters searchFilters, SearchResult previousPageResult) {
         ModrinthSearchResult modrinthSearchResult = (ModrinthSearchResult) previousPageResult;
 
-        // Fixes an issue where the offset being equal or greater than total_hits is ignored
         if (modrinthSearchResult != null && modrinthSearchResult.previousOffset >= modrinthSearchResult.totalResultCount) {
             ModrinthSearchResult emptyResult = new ModrinthSearchResult();
             emptyResult.results = new ModItem[0];
@@ -40,8 +39,6 @@ public class ModrinthApi implements ModpackApi{
             return emptyResult;
         }
 
-
-        // Build the facets filters
         HashMap<String, Object> params = new HashMap<>();
         StringBuilder facetString = new StringBuilder();
         facetString.append("[");
@@ -83,7 +80,6 @@ public class ModrinthApi implements ModpackApi{
     public ModDetail getModDetails(ModItem item) {
         JsonArray response = mApiHandler.get("project/"+item.id+"/version", JsonArray.class);
         if(response == null) return null;
-        System.out.println(response);
         int responseSize = response.size();
         String[] names = new String[responseSize];
         String[] mcNames = new String[responseSize];
@@ -93,12 +89,8 @@ public class ModrinthApi implements ModpackApi{
             JsonObject version = response.get(i).getAsJsonObject();
             JsonObject filesJsonObject = version.getAsJsonArray("files").get(0).getAsJsonObject();
             names[i] = version.get("name").getAsString();
-            StringBuilder mcName = new StringBuilder();
-            for(Object object : version.getAsJsonArray("game_versions").asList()){
-                mcName.append(object.asString());
-                mcName.append("  ");
-            }
-            mcNames[i] = mcName.toString();
+            JsonArray gameVersions = version.getAsJsonArray("game_versions");
+            mcNames[i] = gameVersions.size() > 0 ? gameVersions.get(0).getAsString() : "";
             urls[i] = filesJsonObject.get("url").getAsString();
             hashes[i] = filesJsonObject.getAsJsonObject("hashes").get("sha1").getAsString();
         }
@@ -107,7 +99,6 @@ public class ModrinthApi implements ModpackApi{
 
     @Override
     public ModLoader installMod(ModDetail modDetail, int selectedVersion) throws IOException{
-        //TODO considering only modpacks for now
         return ModpackInstaller.installModpack(modDetail, selectedVersion, this::installMrpack);
     }
 
@@ -134,7 +125,6 @@ public class ModrinthApi implements ModpackApi{
             ModrinthIndex modrinthIndex = Tools.GLOBAL_GSON.fromJson(
                     Tools.read(ZipUtils.getEntryStream(modpackZipFile, "modrinth.index.json")),
                     ModrinthIndex.class);
-
             ModDownloader modDownloader = new ModDownloader(instanceDestination);
             for(ModrinthIndex.ModrinthIndexFile indexFile : modrinthIndex.files) {
                 modDownloader.submitDownload(indexFile.fileSize, indexFile.path, indexFile.hashes.sha1, indexFile.downloads);

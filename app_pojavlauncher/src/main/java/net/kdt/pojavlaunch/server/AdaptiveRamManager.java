@@ -19,6 +19,9 @@ public final class AdaptiveRamManager {
         public long freeStorageMb;
         public int recommendedHeapMb;
         public int maxSafeHeapMb;
+        public int lowPresetMb;
+        public int balancedPresetMb;
+        public int performancePresetMb;
         public String notes;
     }
 
@@ -44,25 +47,36 @@ public final class AdaptiveRamManager {
             s.freeStorageMb = -1;
         }
         long budget = Math.max(0, s.availMemMb - Math.max(256, s.thresholdMb));
-        int recommend = (int) Math.min(1024, Math.max(256, budget * 35 / 100));
+        int auto = (int) Math.min(1024, Math.max(256, budget * 35 / 100));
         int maxSafe = (int) Math.min(1536, Math.max(256, budget * 50 / 100));
         if (s.availMemMb < 700) {
-            recommend = 384;
-            maxSafe = 512;
-            s.notes = "Low available memory; use small view-distance and few players.";
+            auto = 384; maxSafe = 512;
+            s.notes = "Low available memory; use Vanilla, view-distance 6-8, few players.";
         } else if (s.availMemMb < 1200) {
-            recommend = Math.min(recommend, 512);
-            maxSafe = Math.min(maxSafe, 768);
-            s.notes = "Moderate memory; prefer Vanilla over heavily modded Paper setups.";
+            auto = Math.min(auto, 512); maxSafe = Math.min(maxSafe, 768);
+            s.notes = "Moderate memory; prefer light configs over heavy modpacks.";
         } else {
-            s.notes = "Heap is a recommendation only; actual free memory changes under load.";
+            s.notes = "Heap is a recommendation; free memory changes under load.";
         }
         if (s.freeStorageMb >= 0 && s.freeStorageMb < 1024) {
             s.notes = (s.notes == null ? "" : s.notes + " ") + "Low free storage (<1 GB).";
         }
-        s.recommendedHeapMb = align64(recommend);
+        s.recommendedHeapMb = align64(auto);
         s.maxSafeHeapMb = align64(maxSafe);
+        s.lowPresetMb = align64(Math.min(s.recommendedHeapMb, Math.max(256, auto * 70 / 100)));
+        s.balancedPresetMb = s.recommendedHeapMb;
+        s.performancePresetMb = align64(Math.min(maxSafe, Math.max(s.recommendedHeapMb, auto * 120 / 100)));
         return s;
+    }
+
+    public static int heapForPreset(@NonNull Snapshot s, @NonNull ServerProfile.RamPreset preset) {
+        switch (preset) {
+            case LOW: return s.lowPresetMb;
+            case PERFORMANCE: return s.performancePresetMb;
+            case BALANCED: return s.balancedPresetMb;
+            case AUTO:
+            default: return s.recommendedHeapMb;
+        }
     }
 
     public static int clampHeap(int requestedMb, int maxSafeMb) {

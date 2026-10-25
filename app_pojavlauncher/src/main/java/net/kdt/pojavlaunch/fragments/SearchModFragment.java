@@ -102,7 +102,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
         View searchBtn = view.findViewById(R.id.search_mod_button);
         if (searchBtn != null) searchBtn.setOnClickListener(v -> applySearch());
-        // Some layouts use the EditText action; also search on filter apply
         if (mSearchEditText != null) {
             mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
                 applySearch();
@@ -163,7 +162,8 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.GONE);
         if (mStatusTextView != null) {
             mStatusTextView.setTextColor(Color.RED);
-            if (error == SearchResultCallback.ERROR_NO_RESULTS) mStatusTextView.setText("No results");
+            if (error == ModItemAdapter.SearchResultCallback.ERROR_NO_RESULTS)
+                mStatusTextView.setText("No results");
             else mStatusTextView.setText("Search error");
         }
     }

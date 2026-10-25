@@ -26,7 +26,7 @@ public class NexusHubFragment extends Fragment {
         String serverStatus = ServerController.get().isRunning()
                 ? (ServerController.get().isReady() ? "Server: READY" : "Server: RUNNING")
                 : "Server: stopped";
-        status.setText(serverStatus + "\nNexus Launcher V4 · unified libraries");
+        status.setText(serverStatus + "\nNexus Launcher V4 · real data destinations");
 
         setNav(view, R.id.hub_btn_mods, () ->
                 Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
@@ -58,6 +58,8 @@ public class NexusHubFragment extends Fragment {
                         SearchModFragment.newInstance("plugin").getArguments()));
         setNav(view, R.id.hub_btn_perf, () ->
                 Tools.swapFragment(requireActivity(), PerformanceLabFragment.class, PerformanceLabFragment.TAG, null));
+        setNav(view, R.id.hub_btn_diag, () ->
+                Tools.swapFragment(requireActivity(), DiagnosticsFragment.class, DiagnosticsFragment.TAG, null));
         setNav(view, R.id.hub_btn_profiles, () ->
                 Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class, ProfileTypeSelectFragment.TAG, null));
         setNav(view, R.id.hub_btn_accounts, () ->

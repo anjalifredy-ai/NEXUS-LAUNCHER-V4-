@@ -100,7 +100,15 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         mRecyclerview.setAdapter(mModItemAdapter);
         mRecyclerview.addOnScrollListener(mOverlayPositionListener);
 
-        view.findViewById(R.id.search_mod_button).setOnClickListener(v -> applySearch());
+        View searchBtn = view.findViewById(R.id.search_mod_button);
+        if (searchBtn != null) searchBtn.setOnClickListener(v -> applySearch());
+        // Some layouts use the EditText action; also search on filter apply
+        if (mSearchEditText != null) {
+            mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
+                applySearch();
+                return true;
+            });
+        }
         mFilterButton.setOnClickListener(v -> openFilterDialog());
         applySearch();
     }
@@ -119,24 +127,26 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     }
 
     private void openFilterDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(R.layout.dialog_mod_filter)
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
-        dialog.show();
-        // best-effort: if dialog layout exists, wire version filter
         try {
+            AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                    .setView(R.layout.dialog_mod_filter)
+                    .setPositiveButton(android.R.string.ok, (d, w) -> applySearch())
+                    .create();
+            dialog.show();
             TextView selected = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
             Button selectVersion = dialog.findViewById(R.id.search_mod_mc_version_button);
-            Button apply = dialog.findViewById(R.id.search_mod_apply_filters);
             if (selected != null && mSearchFilters.mcVersion != null) selected.setText(mSearchFilters.mcVersion);
             if (selectVersion != null) selectVersion.setOnClickListener(v ->
                     VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
                         mSearchFilters.mcVersion = id;
                         if (selected != null) selected.setText(id);
                     }));
-            if (apply != null) apply.setOnClickListener(v -> { applySearch(); dialog.dismiss(); });
-        } catch (Throwable ignored) {}
+        } catch (Throwable t) {
+            VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
+                mSearchFilters.mcVersion = id;
+                applySearch();
+            });
+        }
     }
 
     @Override
@@ -153,12 +163,8 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.GONE);
         if (mStatusTextView != null) {
             mStatusTextView.setTextColor(Color.RED);
-            mStatusTextView.setText(error);
+            if (error == SearchResultCallback.ERROR_NO_RESULTS) mStatusTextView.setText("No results");
+            else mStatusTextView.setText("Search error");
         }
-    }
-
-    @Override
-    public void onSearchStarted() {
-        if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.VISIBLE);
     }
 }

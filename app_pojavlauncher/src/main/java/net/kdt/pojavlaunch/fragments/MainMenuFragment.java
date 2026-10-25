@@ -22,7 +22,9 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
+import net.kdt.pojavlaunch.server.ServerController;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
@@ -54,7 +56,7 @@ public class MainMenuFragment extends Fragment {
         mDiscordButton.setOnClickListener(v -> Tools.openURL(requireActivity(), getString(R.string.discord_invite)));
         mCustomControlButton.setOnClickListener(v -> startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
         mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation(false));
-        mInstallJarButton.setOnLongClickListener(v->{
+        mInstallJarButton.setOnLongClickListener(v -> {
             runInstallerWithConfirmation(true);
             return true;
         });
@@ -62,41 +64,67 @@ public class MainMenuFragment extends Fragment {
 
         mPlayButton.setOnClickListener(v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
 
-        mShareLogsButton.setOnClickListener((v) -> shareLog(requireContext()));
-
-        mOpenDirectoryButton.setOnClickListener((v)-> openPath(v.getContext(), getCurrentProfileDirectory(), false));
+        mShareLogsButton.setOnClickListener(v -> shareLog(requireContext()));
+        mOpenDirectoryButton.setOnClickListener(v -> openPath(v.getContext(), getCurrentProfileDirectory(), false));
 
         View.OnClickListener openServers = v ->
                 Tools.swapFragment(requireActivity(), ServerManagerFragment.class, ServerManagerFragment.TAG, null);
-        View serverBtn = view.findViewById(R.id.nav_mods);
-        if (serverBtn != null) serverBtn.setOnClickListener(openServers);
         View serverHostBtn = view.findViewById(R.id.server_host_button);
         if (serverHostBtn != null) serverHostBtn.setOnClickListener(openServers);
+
+        View navHome = view.findViewById(R.id.nav_home);
+        if (navHome != null) navHome.setOnClickListener(v -> Tools.backToMainMenu(requireActivity()));
+
+        View navProfiles = view.findViewById(R.id.nav_profiles);
+        if (navProfiles != null) {
+            navProfiles.setOnClickListener(v ->
+                    Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class, ProfileTypeSelectFragment.TAG, null));
+        }
+
+        View navMods = view.findViewById(R.id.nav_mods);
+        if (navMods != null) {
+            navMods.setOnClickListener(v ->
+                    Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
+                            SearchModFragment.newInstance("mod").getArguments()));
+        }
+
         View navSettings = view.findViewById(R.id.nav_settings);
         if (navSettings != null) {
             navSettings.setOnClickListener(v ->
-                Tools.swapFragment(requireActivity(), net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment.class, "SETTINGS_FRAGMENT", null));
+                    Tools.swapFragment(requireActivity(), LauncherPreferenceFragment.class, "SETTINGS_FRAGMENT", null));
         }
 
-        mNewsButton.setOnLongClickListener((v)->{
-            Tools.swapFragment(requireActivity(), GamepadMapperFragment.class, GamepadMapperFragment.TAG, null);
+        mNewsButton.setOnLongClickListener(v -> {
+            Tools.swapFragment(requireActivity(), NexusHubFragment.class, NexusHubFragment.TAG, null);
             return true;
         });
+        mOpenDirectoryButton.setOnLongClickListener(v -> {
+            Tools.swapFragment(requireActivity(), NexusHubFragment.class, NexusHubFragment.TAG, null);
+            return true;
+        });
+
+        View versionLabel = view.findViewById(R.id.nexus_version_label);
+        if (versionLabel instanceof android.widget.TextView) {
+            String s = ServerController.get().isRunning()
+                    ? (ServerController.get().isReady() ? "SRV READY" : "SRV ON")
+                    : "Nexus";
+            ((android.widget.TextView) versionLabel).setText(s);
+        }
     }
 
     private File getCurrentProfileDirectory() {
         String currentProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
-        if(!Tools.isValidString(currentProfile)) return new File(Tools.DIR_GAME_NEW);
+        if (!Tools.isValidString(currentProfile)) return new File(Tools.DIR_GAME_NEW);
         LauncherProfiles.load();
         MinecraftProfile profileObject = LauncherProfiles.mainProfileJson.profiles.get(currentProfile);
-        if(profileObject == null) return new File(Tools.DIR_GAME_NEW);
+        if (profileObject == null) return new File(Tools.DIR_GAME_NEW);
         return Tools.getGameDirPath(profileObject);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mVersionSpinner.reloadProfiles();
+        if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
     }
 
     private void runInstallerWithConfirmation(boolean isCustomArgs) {

@@ -26,7 +26,7 @@ public class NexusHubFragment extends Fragment {
         String serverStatus = ServerController.get().isRunning()
                 ? (ServerController.get().isReady() ? "Server: READY" : "Server: RUNNING")
                 : "Server: stopped";
-        status.setText(serverStatus + "\nTap a destination below.");
+        status.setText(serverStatus + "\nAll destinations below are live screens.");
 
         setNav(view, R.id.hub_btn_mods, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
@@ -39,11 +39,19 @@ public class NexusHubFragment extends Fragment {
         setNav(view, R.id.hub_btn_resourcepacks, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("resourcepack").getArguments()));
+        setNav(view, R.id.hub_btn_installed_rp, () ->
+                Tools.swapFragment(requireActivity(), InstalledPacksFragment.class, InstalledPacksFragment.TAG,
+                        InstalledPacksFragment.newInstance("resourcepacks").getArguments()));
         setNav(view, R.id.hub_btn_shaders, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("shader").getArguments()));
+        setNav(view, R.id.hub_btn_installed_shaders, () ->
+                Tools.swapFragment(requireActivity(), InstalledPacksFragment.class, InstalledPacksFragment.TAG,
+                        InstalledPacksFragment.newInstance("shaderpacks").getArguments()));
         setNav(view, R.id.hub_btn_servers, () ->
                 Tools.swapFragment(requireActivity(), ServerManagerFragment.class, ServerManagerFragment.TAG, null));
+        setNav(view, R.id.hub_btn_multiplayer, () ->
+                Tools.swapFragment(requireActivity(), MultiplayerServersFragment.class, MultiplayerServersFragment.TAG, null));
         setNav(view, R.id.hub_btn_plugins, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("plugin").getArguments()));

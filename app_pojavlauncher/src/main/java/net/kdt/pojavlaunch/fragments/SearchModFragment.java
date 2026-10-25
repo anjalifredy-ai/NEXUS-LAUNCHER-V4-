@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,8 +28,18 @@ import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 public class SearchModFragment extends Fragment implements ModItemAdapter.SearchResultCallback {
 
     public static final String TAG = "SearchModFragment";
+    public static final String ARG_MODE = "nexus_search_mode";
+
+    public static SearchModFragment newInstance(String mode) {
+        SearchModFragment f = new SearchModFragment();
+        Bundle b = new Bundle();
+        b.putString(ARG_MODE, mode != null ? mode : "modpack");
+        f.setArguments(b);
+        return f;
+    }
+
     private View mOverlay;
-    private float mOverlayTopCache; // Padding cache reduce resource lookup
+    private float mOverlayTopCache;
 
     private final RecyclerView.OnScrollListener mOverlayPositionListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -49,13 +57,21 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     private ColorStateList mDefaultTextColor;
 
     private ModpackApi modpackApi;
-
     private final SearchFilters mSearchFilters;
 
     public SearchModFragment(){
         super(R.layout.fragment_mod_search);
         mSearchFilters = new SearchFilters();
         mSearchFilters.isModpack = true;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        String mode = args != null ? args.getString(ARG_MODE, "modpack") : "modpack";
+        mSearchFilters.projectType = mode;
+        mSearchFilters.isModpack = "modpack".equals(mode);
     }
 
     @Override
@@ -66,108 +82,55 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // You can only access resources after attaching to current context
-        mModItemAdapter = new ModItemAdapter(getResources(), modpackApi, this);
-        ProgressKeeper.addTaskCountListener(mModItemAdapter);
-        mOverlayTopCache = getResources().getDimension(R.dimen.fragment_padding_medium);
-
         mOverlay = view.findViewById(R.id.search_mod_overlay);
+        mOverlayTopCache = getResources().getDimensionPixelSize(R.dimen.fragment_padding_medium);
         mSearchEditText = view.findViewById(R.id.search_mod_edittext);
-        mSearchProgressBar = view.findViewById(R.id.search_mod_progressbar);
-        mRecyclerview = view.findViewById(R.id.search_mod_list);
-        mStatusTextView = view.findViewById(R.id.search_mod_status_text);
         mFilterButton = view.findViewById(R.id.search_mod_filter);
-
+        mRecyclerview = view.findViewById(R.id.mod_list_view);
+        mSearchProgressBar = view.findViewById(R.id.search_mod_progressbar);
+        mStatusTextView = view.findViewById(R.id.search_mod_status);
         mDefaultTextColor = mStatusTextView.getTextColors();
 
-        mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+        mModItemAdapter = new ModItemAdapter(mSearchFilters, modpackApi, this);
+        mRecyclerview.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);
-
         mRecyclerview.addOnScrollListener(mOverlayPositionListener);
 
-        mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
-            searchMods(mSearchEditText.getText().toString());
-            mSearchEditText.clearFocus();
-            return false;
-        });
+        view.findViewById(R.id.search_mod_button).setOnClickListener(v -> applySearch());
+        mFilterButton.setOnClickListener(v -> openFilterDialog());
 
-        mOverlay.post(()->{
-           int overlayHeight = mOverlay.getHeight();
-           mRecyclerview.setPadding(mRecyclerview.getPaddingLeft(),
-                   mRecyclerview.getPaddingTop() + overlayHeight,
-                   mRecyclerview.getPaddingRight(),
-                   mRecyclerview.getPaddingBottom());
-        });
-        mFilterButton.setOnClickListener(v -> displayFilterDialog());
-
-        searchMods(null);
+        applySearch();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ProgressKeeper.removeTaskCountListener(mModItemAdapter);
-        mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
+    private void applySearch() {
+        CharSequence name = mSearchEditText.getText();
+        mSearchFilters.name = name == null ? "" : name.toString();
+        mModItemAdapter.performSearchQuery(mSearchFilters);
+    }
+
+    private void openFilterDialog() {
+        VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
+            mSearchFilters.mcVersion = id;
+            applySearch();
+        });
     }
 
     @Override
     public void onSearchFinished() {
         mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setVisibility(View.GONE);
+        mStatusTextView.setTextColor(mDefaultTextColor);
+        mStatusTextView.setText(R.string.modpack_search_result_count);
     }
 
     @Override
     public void onSearchError(int error) {
         mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setVisibility(View.VISIBLE);
-        switch (error) {
-            case ERROR_INTERNAL:
-                mStatusTextView.setTextColor(Color.RED);
-                mStatusTextView.setText(R.string.search_modpack_error);
-                break;
-            case ERROR_NO_RESULTS:
-                mStatusTextView.setTextColor(mDefaultTextColor);
-                mStatusTextView.setText(R.string.search_modpack_no_result);
-                break;
-        }
+        mStatusTextView.setTextColor(Color.RED);
+        mStatusTextView.setText(error);
     }
 
-    private void searchMods(String name) {
+    @Override
+    public void onSearchStarted() {
         mSearchProgressBar.setVisibility(View.VISIBLE);
-        mSearchFilters.name = name == null ? "" : name;
-        mModItemAdapter.performSearchQuery(mSearchFilters);
-    }
-
-    private void displayFilterDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(R.layout.dialog_mod_filters)
-                .create();
-
-        // setup the view behavior
-        dialog.setOnShowListener(dialogInterface -> {
-            TextView mSelectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
-            Button mSelectVersionButton = dialog.findViewById(R.id.search_mod_mc_version_button);
-            Button mApplyButton = dialog.findViewById(R.id.search_mod_apply_filters);
-
-            assert mSelectVersionButton != null;
-            assert mSelectedVersion != null;
-            assert mApplyButton != null;
-
-            // Setup the expendable list behavior
-            mSelectVersionButton.setOnClickListener(v -> VersionSelectorDialog.open(v.getContext(), true, (id, snapshot)-> mSelectedVersion.setText(id)));
-
-            // Apply visually all the current settings
-            mSelectedVersion.setText(mSearchFilters.mcVersion);
-
-            // Apply the new settings
-            mApplyButton.setOnClickListener(v -> {
-                mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
-                searchMods(mSearchEditText.getText().toString());
-                dialogInterface.dismiss();
-            });
-        });
-
-
-        dialog.show();
     }
 }

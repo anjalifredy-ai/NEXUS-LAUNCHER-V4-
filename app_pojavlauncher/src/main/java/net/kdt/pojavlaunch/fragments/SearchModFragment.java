@@ -59,6 +59,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     private ColorStateList mDefaultTextColor;
 
     private ModpackApi modpackApi;
+
     private final SearchFilters mSearchFilters;
 
     public SearchModFragment(){
@@ -100,71 +101,76 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         mRecyclerview.setAdapter(mModItemAdapter);
         mRecyclerview.addOnScrollListener(mOverlayPositionListener);
 
-        View searchBtn = view.findViewById(R.id.search_mod_button);
-        if (searchBtn != null) searchBtn.setOnClickListener(v -> applySearch());
-        if (mSearchEditText != null) {
-            mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
-                applySearch();
-                return true;
-            });
-        }
-        mFilterButton.setOnClickListener(v -> openFilterDialog());
-        applySearch();
+        mFilterButton.setOnClickListener(v -> displayFilterDialog());
+        mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            searchMods(mSearchEditText.getText().toString());
+            return true;
+        });
+
+        searchMods(null);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ProgressKeeper.removeTaskCountListener(mModItemAdapter);
-        if (mRecyclerview != null) mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
-    }
-
-    private void applySearch() {
-        CharSequence name = mSearchEditText.getText();
-        mSearchFilters.name = name == null ? "" : name.toString();
-        mModItemAdapter.performSearchQuery(mSearchFilters);
-    }
-
-    private void openFilterDialog() {
-        try {
-            AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                    .setView(R.layout.dialog_mod_filter)
-                    .setPositiveButton(android.R.string.ok, (d, w) -> applySearch())
-                    .create();
-            dialog.show();
-            TextView selected = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
-            Button selectVersion = dialog.findViewById(R.id.search_mod_mc_version_button);
-            if (selected != null && mSearchFilters.mcVersion != null) selected.setText(mSearchFilters.mcVersion);
-            if (selectVersion != null) selectVersion.setOnClickListener(v ->
-                    VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
-                        mSearchFilters.mcVersion = id;
-                        if (selected != null) selected.setText(id);
-                    }));
-        } catch (Throwable t) {
-            VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
-                mSearchFilters.mcVersion = id;
-                applySearch();
-            });
-        }
+        mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
     }
 
     @Override
     public void onSearchFinished() {
-        if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.GONE);
-        if (mStatusTextView != null) {
-            mStatusTextView.setTextColor(mDefaultTextColor);
-            mStatusTextView.setText("");
-        }
+        mSearchProgressBar.setVisibility(View.GONE);
+        mStatusTextView.setVisibility(View.GONE);
     }
 
     @Override
     public void onSearchError(int error) {
-        if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.GONE);
-        if (mStatusTextView != null) {
-            mStatusTextView.setTextColor(Color.RED);
-            if (error == ModItemAdapter.SearchResultCallback.ERROR_NO_RESULTS)
-                mStatusTextView.setText("No results");
-            else mStatusTextView.setText("Search error");
+        mSearchProgressBar.setVisibility(View.GONE);
+        mStatusTextView.setVisibility(View.VISIBLE);
+        switch (error) {
+            case ModItemAdapter.SearchResultCallback.ERROR_INTERNAL:
+                mStatusTextView.setTextColor(Color.RED);
+                mStatusTextView.setText(R.string.search_modpack_error);
+                break;
+            case ModItemAdapter.SearchResultCallback.ERROR_NO_RESULTS:
+                mStatusTextView.setTextColor(mDefaultTextColor);
+                mStatusTextView.setText(R.string.search_modpack_no_result);
+                break;
         }
+    }
+
+    private void searchMods(String name) {
+        mSearchProgressBar.setVisibility(View.VISIBLE);
+        mSearchFilters.name = name == null ? "" : name;
+        mModItemAdapter.performSearchQuery(mSearchFilters);
+    }
+
+    private void displayFilterDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(R.layout.dialog_mod_filters)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            TextView mSelectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
+            Button mSelectVersionButton = dialog.findViewById(R.id.search_mod_mc_version_button);
+            Button mApplyButton = dialog.findViewById(R.id.search_mod_apply_filters);
+
+            assert mSelectVersionButton != null;
+            assert mSelectedVersion != null;
+            assert mApplyButton != null;
+
+            mSelectVersionButton.setOnClickListener(v ->
+                    VersionSelectorDialog.open(v.getContext(), true, (id, snapshot) -> mSelectedVersion.setText(id)));
+
+            mSelectedVersion.setText(mSearchFilters.mcVersion);
+
+            mApplyButton.setOnClickListener(v -> {
+                mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
+                searchMods(mSearchEditText.getText().toString());
+                dialogInterface.dismiss();
+            });
+        });
+
+        dialog.show();
     }
 }

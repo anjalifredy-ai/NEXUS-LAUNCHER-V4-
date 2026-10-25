@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Nexus Launcher design tokens -->
-    <color name="nexus_bg">#080B10</color>
-    <color name="nexus_surface_main">#10151D</color>
-    <color name="nexus_surface_elevated">#171E27</color>
-    <color name="nexus_card">#151B23</color>
-    <color name="nexus_border">#2B3440</color>
-    <color name="nexus_text_primary">#F4F6FA</color>
-    <color name="nexus_text_secondary">#A3ADBA</color>
-    <color name="nexus_text_muted">#788493</color>
-    <color name="nexus_orange">#F28A22</color>
-    <color name="nexus_orange_hover">#FF9D35</color>
-    <color name="nexus_blue">#527BFF</color>
-    <color name="nexus_success">#35D76F</color>
+    <color name="nexus_bg">#090E18</color>
+    <color name="nexus_surface_main">#111827</color>
+    <color name="nexus_surface_elevated">#172033</color>
+    <color name="nexus_card">#172033</color>
+    <color name="nexus_card_hover">#1C2740</color>
+    <color name="nexus_border">#29364C</color>
+    <color name="nexus_text_primary">#F2F5FA</color>
+    <color name="nexus_text_secondary">#9AA8BC</color>
+    <color name="nexus_text_muted">#6E7C90</color>
+    <color name="nexus_accent">#67A8FF</color>
+    <color name="nexus_accent_dim">#3D6FB8</color>
+    <color name="nexus_violet">#9A85FF</color>
+    <color name="nexus_orange">#67A8FF</color>
+    <color name="nexus_orange_hover">#8CBCFF</color>
+    <color name="nexus_blue">#67A8FF</color>
+    <color name="nexus_success">#3DCF7A</color>
     <color name="nexus_warning">#E8B34A</color>
     <color name="nexus_error">#F05B64</color>
+    <color name="nexus_chip">#1A2438</color>
 </resources>

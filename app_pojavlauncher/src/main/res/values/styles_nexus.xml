@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Nexus.Card">
+        <item name="android:background">@color/nexus_card</item>
+        <item name="android:padding">12dp</item>
+    </style>
+    <style name="Nexus.SectionLabel">
+        <item name="android:textColor">@color/nexus_text_muted</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    <style name="Nexus.Title">
+        <item name="android:textColor">@color/nexus_text_primary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Nexus.Body">
+        <item name="android:textColor">@color/nexus_text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="Nexus.PrimaryButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/nexus_accent</item>
+        <item name="android:textColor">#0A0F18</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">44dp</item>
+    </style>
+    <style name="Nexus.SecondaryButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/nexus_chip</item>
+        <item name="android:textColor">@color/nexus_text_primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+    <style name="Nexus.ChipButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@color/nexus_chip</item>
+        <item name="android:textColor">@color/nexus_text_secondary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+    </style>
+</resources>

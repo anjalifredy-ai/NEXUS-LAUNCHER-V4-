@@ -32,46 +32,44 @@ public final class ServerInstaller {
     private ServerInstaller() {}
 
     public static void install(@NonNull ServerProfile profile, @Nullable Progress progress) throws Exception {
+        if (!ServerPaths.isSafeDirectoryName(profile.directoryName))
+            throw new Exception("Unsafe server directory name");
         File root = profile.resolveRoot(ServerPaths.serversRoot());
-        if (!root.exists() && !root.mkdirs()) {
+        if (!root.exists() && !root.mkdirs())
             throw new Exception("Cannot create server directory: " + root.getAbsolutePath());
-        }
-        if (!profile.eulaAccepted) {
+        if (!profile.eulaAccepted)
             throw new Exception("EULA must be accepted before install/start");
-        }
+        profile.requiredJavaMajor = ServerVersionCatalog.requiredJavaMajor(profile.mcVersion);
         writeEula(profile.eulaFile(root));
-        ensureProperties(profile);
-        if (profile.software == ServerProfile.Software.VANILLA) {
-            installVanilla(profile, root, progress);
-        } else if (profile.software == ServerProfile.Software.PAPER) {
-            installPaper(profile, root, progress);
-        } else {
-            throw new Exception("Unsupported server software");
-        }
+        ServerPropertiesEditor.writeCore(profile);
+
+        if (profile.software == ServerProfile.Software.VANILLA) installVanilla(profile, root, progress);
+        else if (profile.software == ServerProfile.Software.PAPER) installPaper(profile, root, progress);
+        else if (profile.software == ServerProfile.Software.FABRIC) installFabric(profile, root, progress);
+        else throw new Exception("Unsupported server software");
+
+        profile.modsDir(root).mkdirs();
+        profile.pluginsDir(root).mkdirs();
+        profile.backupsDir(root).mkdirs();
     }
 
     private static void installVanilla(ServerProfile profile, File root, Progress progress) throws Exception {
         if (progress != null) progress.onStatus("Fetching Mojang version manifest");
-        String manifestJson = DownloadUtils.downloadString(MANIFEST);
-        JsonObject manifest = JsonParser.parseString(manifestJson).getAsJsonObject();
+        JsonObject manifest = JsonParser.parseString(DownloadUtils.downloadString(MANIFEST)).getAsJsonObject();
         String versionUrl = null;
-        JsonArray versions = manifest.getAsJsonArray("versions");
-        for (JsonElement el : versions) {
+        for (JsonElement el : manifest.getAsJsonArray("versions")) {
             JsonObject v = el.getAsJsonObject();
             if (profile.mcVersion.equals(v.get("id").getAsString())) {
                 versionUrl = v.get("url").getAsString();
                 break;
             }
         }
-        if (versionUrl == null) {
-            throw new Exception("Minecraft version not found in Mojang manifest: " + profile.mcVersion);
-        }
+        if (versionUrl == null) throw new Exception("Minecraft version not found: " + profile.mcVersion);
         if (progress != null) progress.onStatus("Fetching version metadata");
         JsonObject versionJson = JsonParser.parseString(DownloadUtils.downloadString(versionUrl)).getAsJsonObject();
         JsonObject downloads = versionJson.getAsJsonObject("downloads");
-        if (downloads == null || !downloads.has("server")) {
+        if (downloads == null || !downloads.has("server"))
             throw new Exception("No official server jar for " + profile.mcVersion);
-        }
         JsonObject server = downloads.getAsJsonObject("server");
         String url = server.get("url").getAsString();
         String sha1 = server.has("sha1") ? server.get("sha1").getAsString() : null;
@@ -79,13 +77,13 @@ public final class ServerInstaller {
         if (progress != null) progress.onStatus("Downloading Vanilla server.jar");
         DownloadUtils.downloadFile(url, jar);
         if (sha1 != null && !sha1.isEmpty()) {
-            String actual = hashFile(jar, "SHA-1");
-            if (!sha1.equalsIgnoreCase(actual)) {
+            if (!sha1.equalsIgnoreCase(hashFile(jar, "SHA-1"))) {
                 jar.delete();
                 throw new Exception("SHA-1 mismatch for server.jar");
             }
         }
-        Log.i(TAG, "Installed vanilla server to " + jar.getAbsolutePath());
+        profile.softwareBuild = "";
+        Log.i(TAG, "Installed vanilla server");
     }
 
     private static void installPaper(ServerProfile profile, File root, Progress progress) throws Exception {
@@ -96,57 +94,76 @@ public final class ServerInstaller {
         try {
             buildsJson = JsonParser.parseString(DownloadUtils.downloadString(buildsUrl)).getAsJsonObject();
         } catch (Exception e) {
-            throw new Exception("Paper has no builds for " + ver + " or API unreachable: " + e.getMessage());
+            throw new Exception("Paper unavailable for " + ver + ": " + e.getMessage());
         }
         JsonArray builds = buildsJson.getAsJsonArray("builds");
-        if (builds == null || builds.size() == 0) {
-            throw new Exception("No Paper builds for " + ver);
+        if (builds == null || builds.size() == 0) throw new Exception("No Paper builds for " + ver);
+        JsonObject chosen = builds.get(builds.size() - 1).getAsJsonObject();
+        if (profile.softwareBuild != null && !profile.softwareBuild.isEmpty()) {
+            int want = Integer.parseInt(profile.softwareBuild);
+            chosen = null;
+            for (JsonElement el : builds) {
+                JsonObject b = el.getAsJsonObject();
+                if (b.get("build").getAsInt() == want) { chosen = b; break; }
+            }
+            if (chosen == null) throw new Exception("Paper build " + want + " not found");
         }
-        JsonObject latest = builds.get(builds.size() - 1).getAsJsonObject();
-        int build = latest.get("build").getAsInt();
-        JsonObject downloads = latest.getAsJsonObject("downloads");
-        JsonObject application = downloads.getAsJsonObject("application");
+        int build = chosen.get("build").getAsInt();
+        JsonObject application = chosen.getAsJsonObject("downloads").getAsJsonObject("application");
         String fileName = application.get("name").getAsString();
         String sha256 = application.has("sha256") ? application.get("sha256").getAsString() : null;
         String url = "https://api.papermc.io/v2/projects/paper/versions/" + ver + "/builds/" + build + "/downloads/" + fileName;
         File jar = profile.serverJar(root);
         if (progress != null) progress.onStatus("Downloading Paper build " + build);
         DownloadUtils.downloadFile(url, jar);
-        if (sha256 != null) {
-            String actual = hashFile(jar, "SHA-256");
-            if (!sha256.equalsIgnoreCase(actual)) {
-                jar.delete();
-                throw new Exception("SHA-256 mismatch for paper.jar");
-            }
+        if (sha256 != null && !sha256.equalsIgnoreCase(hashFile(jar, "SHA-256"))) {
+            jar.delete();
+            throw new Exception("SHA-256 mismatch for paper.jar");
         }
+        profile.softwareBuild = String.valueOf(build);
         Log.i(TAG, "Installed Paper build " + build);
+    }
+
+    private static void installFabric(ServerProfile profile, File root, Progress progress) throws Exception {
+        String game = profile.mcVersion;
+        String loader = profile.softwareBuild;
+        if (loader == null || loader.isEmpty()) {
+            if (progress != null) progress.onStatus("Resolving latest Fabric loader");
+            loader = ServerVersionCatalog.latestFabricLoader();
+            profile.softwareBuild = loader;
+        }
+        String installerVersion = "1.0.1";
+        try {
+            JsonArray arr = JsonParser.parseString(
+                    DownloadUtils.downloadString("https://meta.fabricmc.net/v2/versions/installer")).getAsJsonArray();
+            if (arr.size() > 0) installerVersion = arr.get(0).getAsJsonObject().get("version").getAsString();
+        } catch (Exception ignored) {}
+        String url = "https://meta.fabricmc.net/v2/versions/loader/"
+                + game + "/" + loader + "/" + installerVersion + "/server/jar";
+        File jar = profile.serverJar(root);
+        if (progress != null) progress.onStatus("Downloading Fabric server (loader " + loader + ")");
+        try {
+            DownloadUtils.downloadFile(url, jar);
+        } catch (Exception e) {
+            throw new Exception("Fabric server download failed for " + game + " / " + loader + ": " + e.getMessage());
+        }
+        if (!jar.isFile() || jar.length() < 1000) {
+            jar.delete();
+            throw new Exception("Fabric server jar missing or too small");
+        }
+        Log.i(TAG, "Installed Fabric server loader " + loader);
     }
 
     public static void writeEula(File eula) throws Exception {
         try (OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(eula), StandardCharsets.UTF_8)) {
-            w.write("# By changing the setting below to TRUE you are indicating your agreement to Mojang EULA.\n");
+            w.write("# Mojang EULA accepted via Nexus Launcher\n");
             w.write("eula=true\n");
         }
     }
 
-    public static void ensureProperties(ServerProfile profile) throws Exception {
-        File root = profile.resolveRoot(ServerPaths.serversRoot());
-        File props = profile.propertiesFile(root);
-        if (!root.exists()) root.mkdirs();
-        try (OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(props), StandardCharsets.UTF_8)) {
-            w.write("server-port=" + profile.port + "\n");
-            w.write("max-players=" + profile.maxPlayers + "\n");
-            w.write("view-distance=" + profile.viewDistance + "\n");
-            w.write("simulation-distance=" + profile.simulationDistance + "\n");
-            w.write("online-mode=false\n");
-            w.write("spawn-protection=0\n");
-            w.write("motd=Nexus Hosted Server\n");
-            w.write("enable-status=true\n");
-            w.write("white-list=false\n");
-            w.write("enforce-secure-profile=false\n");
-            w.write("sync-chunk-writes=true\n");
-            w.write("max-tick-time=60000\n");
-        }
+    public static boolean isInstalled(ServerProfile profile) {
+        File jar = profile.serverJar(profile.resolveRoot(ServerPaths.serversRoot()));
+        return jar.isFile() && jar.length() > 1000;
     }
 
     private static String hashFile(File f, String algo) throws Exception {

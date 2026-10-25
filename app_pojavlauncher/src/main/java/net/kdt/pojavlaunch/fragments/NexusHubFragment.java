@@ -26,11 +26,13 @@ public class NexusHubFragment extends Fragment {
         String serverStatus = ServerController.get().isRunning()
                 ? (ServerController.get().isReady() ? "Server: READY" : "Server: RUNNING")
                 : "Server: stopped";
-        status.setText(serverStatus);
+        status.setText(serverStatus + "\nTap a destination below.");
 
         setNav(view, R.id.hub_btn_mods, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("mod").getArguments()));
+        setNav(view, R.id.hub_btn_installed_mods, () ->
+                Tools.swapFragment(requireActivity(), InstalledModsFragment.class, InstalledModsFragment.TAG, null));
         setNav(view, R.id.hub_btn_modpacks, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("modpack").getArguments()));

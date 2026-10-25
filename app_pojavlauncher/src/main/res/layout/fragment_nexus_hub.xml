@@ -10,12 +10,13 @@
         android:orientation="vertical"
         android:padding="12dp">
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Nexus" android:textColor="@color/nexus_orange" android:textSize="22sp" android:textStyle="bold"/>
+            android:text="Nexus Hub" android:textColor="@color/nexus_orange" android:textSize="22sp" android:textStyle="bold"/>
         <TextView android:id="@+id/nexus_hub_status" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:textColor="@color/nexus_text_secondary" android:textSize="12sp" android:paddingBottom="10dp"/>
         <Button android:id="@+id/hub_btn_home" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Home"/>
-        <Button android:id="@+id/hub_btn_profiles" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Profiles / Install loaders"/>
-        <Button android:id="@+id/hub_btn_mods" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mods (Modrinth)"/>
+        <Button android:id="@+id/hub_btn_profiles" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Profiles / Loaders"/>
+        <Button android:id="@+id/hub_btn_mods" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Browse Mods"/>
+        <Button android:id="@+id/hub_btn_installed_mods" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Installed Mods"/>
         <Button android:id="@+id/hub_btn_modpacks" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Modpacks"/>
         <Button android:id="@+id/hub_btn_resourcepacks" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Resource packs"/>
         <Button android:id="@+id/hub_btn_shaders" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Shaders"/>

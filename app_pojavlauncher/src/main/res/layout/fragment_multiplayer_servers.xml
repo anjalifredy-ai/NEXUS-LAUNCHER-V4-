@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/nexus_bg" android:padding="10dp">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Multiplayer servers" android:textColor="@color/nexus_orange"
+        android:textSize="18sp" android:textStyle="bold"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Saved join addresses (not on-device hosting). Copy address then join from game."
+        android:textColor="@color/nexus_text_secondary" android:textSize="12sp" android:paddingBottom="6dp"/>
+    <EditText android:id="@+id/mp_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:hint="Name" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
+    <EditText android:id="@+id/mp_address" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:hint="Address (host or host:port)" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/mp_btn_add" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Add"/>
+        <Button android:id="@+id/mp_btn_copy" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Copy"/>
+        <Button android:id="@+id/mp_btn_delete" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Delete"/>
+        <Button android:id="@+id/mp_btn_back" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Home"/>
+    </LinearLayout>
+    <ListView android:id="@+id/mp_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
+</LinearLayout>

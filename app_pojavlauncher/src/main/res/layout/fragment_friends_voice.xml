@@ -4,16 +4,58 @@
     android:layout_height="match_parent"
     android:background="@color/nexus_bg"
     android:fillViewport="true">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="12dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Friends and Voice"
+            android:textColor="@color/nexus_text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/voice_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/nexus_text_secondary"
+            android:textSize="13sp"
+            android:paddingBottom="10dp"/>
+
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Friends and Voice" android:textColor="@color/nexus_text_primary"
-            android:textSize="20sp" android:textStyle="bold" android:paddingBottom="8dp"/>
-        <TextView android:id="@+id/voice_status" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="@color/nexus_text_secondary" android:textSize="13sp" android:paddingBottom="12dp"/>
-        <Button android:id="@+id/voice_btn_mic" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Request microphone"/>
-        <Button android:id="@+id/voice_btn_mute" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Toggle mute"/>
-        <Button android:id="@+id/voice_btn_svc_mod" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Browse voice mods (Modrinth)"/>
-        <Button android:id="@+id/voice_btn_back" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Back to Home"/>
+            android:text="Signaling host:port" android:textColor="@color/nexus_text_secondary" android:textSize="12sp"/>
+        <EditText android:id="@+id/voice_signal_host" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:inputType="text" android:hint="127.0.0.1:7070"
+            android:textColor="@color/nexus_text_primary"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Room" android:textColor="@color/nexus_text_secondary" android:textSize="12sp"/>
+        <EditText android:id="@+id/voice_room" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:inputType="text" android:hint="nexus-party"
+            android:textColor="@color/nexus_text_primary"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Display name" android:textColor="@color/nexus_text_secondary" android:textSize="12sp"/>
+        <EditText android:id="@+id/voice_display_name" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:inputType="textPersonName" android:hint="Player"
+            android:textColor="@color/nexus_text_primary"/>
+
+        <Button android:id="@+id/voice_btn_join" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Join room (signaling)"/>
+        <Button android:id="@+id/voice_btn_leave" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Leave room"/>
+        <Button android:id="@+id/voice_btn_mic" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Request microphone"/>
+        <Button android:id="@+id/voice_btn_mute" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Toggle mute"/>
+        <Button android:id="@+id/voice_btn_svc_mod" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Browse voice mods (Modrinth)"/>
+        <Button android:id="@+id/voice_btn_back" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Back to Home"/>
     </LinearLayout>
 </ScrollView>

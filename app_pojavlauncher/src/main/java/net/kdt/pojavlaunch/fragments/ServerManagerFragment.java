@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -98,6 +97,7 @@ public class ServerManagerFragment extends Fragment implements ServerController.
         ServerProfile p = new ServerProfile();
         AdaptiveRamManager.Snapshot ram = AdaptiveRamManager.inspect(requireContext());
         p.heapMb = ram.recommendedHeapMb;
+        p.ramPreset = ServerProfile.RamPreset.AUTO;
         p.name = "Server " + (mProfiles.size() + 1);
         try {
             ServerController.get().upsert(p);
@@ -141,7 +141,8 @@ public class ServerManagerFragment extends Fragment implements ServerController.
         } else {
             String lan = LanNetworkHelper.getLanIpv4();
             if (lan == null) lan = "127.0.0.1";
-            PublicAccessManager.Snapshot s = ServerController.get().publicAccess().requestPublic(lan, p.port);
+            PublicAccessManager.Snapshot s = ServerController.get().publicAccess()
+                    .requestPublic(lan, p.port, !p.isOnlineMode());
             p.publicAccessEnabled = true;
             toast(s.message != null ? s.message : "Public access needs a relay");
         }
@@ -197,8 +198,9 @@ public class ServerManagerFragment extends Fragment implements ServerController.
     private void updateRam() {
         AdaptiveRamManager.Snapshot s = AdaptiveRamManager.inspect(requireContext());
         mRamInfo.setText("RAM avail " + s.availMemMb + " MB / total " + s.totalMemMb
-                + " MB · recommend " + s.recommendedHeapMb + " MB · max safe " + s.maxSafeHeapMb
-                + " MB · storage free " + s.freeStorageMb + " MB"
+                + " · auto " + s.recommendedHeapMb + " · low " + s.lowPresetMb
+                + " · perf " + s.performancePresetMb + " · max " + s.maxSafeHeapMb
+                + " · storage " + s.freeStorageMb + " MB"
                 + (s.notes != null ? ("\n" + s.notes) : ""));
     }
 
@@ -210,7 +212,7 @@ public class ServerManagerFragment extends Fragment implements ServerController.
         else {
             boolean up = ServerController.get().isRunning() && LanNetworkHelper.canConnect("127.0.0.1", port, 400);
             mLanInfo.setText("LAN: " + ip + ":" + port
-                    + (up ? " · port accepts connections" : " · start server to listen")
+                    + (ServerController.get().isReady() ? " · READY" : (up ? " · port open" : " · start server"))
                     + "\nSame Wi-Fi players use this address.");
         }
     }
@@ -249,5 +251,14 @@ public class ServerManagerFragment extends Fragment implements ServerController.
     @Override
     public void onCatalogChanged() {
         Tools.runOnUiThread(this::refreshSpinner);
+    }
+
+    @Override
+    public void onServerReady(@NonNull ServerProfile profile) {
+        Tools.runOnUiThread(() -> {
+            toast("Server ready — players can join");
+            updateLan();
+            updatePublic();
+        });
     }
 }

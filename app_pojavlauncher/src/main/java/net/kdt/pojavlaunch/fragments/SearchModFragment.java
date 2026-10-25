@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -82,24 +84,32 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mOverlay = view.findViewById(R.id.search_mod_overlay);
+        mModItemAdapter = new ModItemAdapter(getResources(), modpackApi, this);
+        ProgressKeeper.addTaskCountListener(mModItemAdapter);
+
         mOverlayTopCache = getResources().getDimensionPixelSize(R.dimen.fragment_padding_medium);
+        mOverlay = view.findViewById(R.id.search_mod_overlay);
         mSearchEditText = view.findViewById(R.id.search_mod_edittext);
-        mFilterButton = view.findViewById(R.id.search_mod_filter);
-        mRecyclerview = view.findViewById(R.id.mod_list_view);
         mSearchProgressBar = view.findViewById(R.id.search_mod_progressbar);
-        mStatusTextView = view.findViewById(R.id.search_mod_status);
+        mRecyclerview = view.findViewById(R.id.search_mod_list);
+        mStatusTextView = view.findViewById(R.id.search_mod_status_text);
+        mFilterButton = view.findViewById(R.id.search_mod_filter);
         mDefaultTextColor = mStatusTextView.getTextColors();
 
-        mModItemAdapter = new ModItemAdapter(mSearchFilters, modpackApi, this);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);
         mRecyclerview.addOnScrollListener(mOverlayPositionListener);
 
         view.findViewById(R.id.search_mod_button).setOnClickListener(v -> applySearch());
         mFilterButton.setOnClickListener(v -> openFilterDialog());
-
         applySearch();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ProgressKeeper.removeTaskCountListener(mModItemAdapter);
+        if (mRecyclerview != null) mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
     }
 
     private void applySearch() {
@@ -109,28 +119,46 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     }
 
     private void openFilterDialog() {
-        VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
-            mSearchFilters.mcVersion = id;
-            applySearch();
-        });
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(R.layout.dialog_mod_filter)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
+        dialog.show();
+        // best-effort: if dialog layout exists, wire version filter
+        try {
+            TextView selected = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
+            Button selectVersion = dialog.findViewById(R.id.search_mod_mc_version_button);
+            Button apply = dialog.findViewById(R.id.search_mod_apply_filters);
+            if (selected != null && mSearchFilters.mcVersion != null) selected.setText(mSearchFilters.mcVersion);
+            if (selectVersion != null) selectVersion.setOnClickListener(v ->
+                    VersionSelectorDialog.open(requireActivity(), false, (id, snapshot) -> {
+                        mSearchFilters.mcVersion = id;
+                        if (selected != null) selected.setText(id);
+                    }));
+            if (apply != null) apply.setOnClickListener(v -> { applySearch(); dialog.dismiss(); });
+        } catch (Throwable ignored) {}
     }
 
     @Override
     public void onSearchFinished() {
-        mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setTextColor(mDefaultTextColor);
-        mStatusTextView.setText(R.string.modpack_search_result_count);
+        if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.GONE);
+        if (mStatusTextView != null) {
+            mStatusTextView.setTextColor(mDefaultTextColor);
+            mStatusTextView.setText("");
+        }
     }
 
     @Override
     public void onSearchError(int error) {
-        mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setTextColor(Color.RED);
-        mStatusTextView.setText(error);
+        if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.GONE);
+        if (mStatusTextView != null) {
+            mStatusTextView.setTextColor(Color.RED);
+            mStatusTextView.setText(error);
+        }
     }
 
     @Override
     public void onSearchStarted() {
-        mSearchProgressBar.setVisibility(View.VISIBLE);
+        if (mSearchProgressBar != null) mSearchProgressBar.setVisibility(View.VISIBLE);
     }
 }

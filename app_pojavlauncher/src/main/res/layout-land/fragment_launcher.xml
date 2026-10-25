@@ -56,7 +56,7 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
                 <com.kdt.mcgui.LauncherMenuButton android:id="@+id/news_button" style="@style/LauncherMenuButton"
                     android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_menu_news" android:text="@string/mcl_tab_wiki" android:textColor="@color/nexus_text_primary"/>
+                    android:drawableStart="@drawable/ic_menu_news" android:text="Hub" android:textColor="@color/nexus_text_primary"/>
                 <View android:id="@+id/social_divider" android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/nexus_border" android:layout_marginHorizontal="4dp"/>
                 <com.kdt.mcgui.LauncherMenuButton android:id="@+id/discord_button" style="@style/LauncherMenuButton"
                     android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1"
@@ -66,6 +66,18 @@
                 android:layout_width="match_parent" android:layout_height="40dp"
                 android:text="Servers" android:textColor="@color/nexus_orange"
                 android:layout_marginTop="6dp"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginTop="4dp">
+                <com.kdt.mcgui.LauncherMenuButton android:id="@+id/nexus_hub_button" style="@style/LauncherMenuButton"
+                    android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                    android:text="Hub" android:textColor="@color/nexus_text_primary"/>
+                <com.kdt.mcgui.LauncherMenuButton android:id="@+id/mods_browser_button" style="@style/LauncherMenuButton"
+                    android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                    android:text="Mods" android:textColor="@color/nexus_text_primary"/>
+                <com.kdt.mcgui.LauncherMenuButton android:id="@+id/perf_lab_button" style="@style/LauncherMenuButton"
+                    android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                    android:text="Perf" android:textColor="@color/nexus_text_primary"/>
+            </LinearLayout>
             <com.kdt.mcgui.LauncherMenuButton android:id="@+id/custom_control_button" style="@style/LauncherMenuButton"
                 android:layout_width="match_parent" android:layout_height="36dp" android:drawableStart="@drawable/ic_menu_custom_controls"
                 android:text="@string/mcl_option_customcontrol" android:textColor="@color/nexus_text_secondary"/>

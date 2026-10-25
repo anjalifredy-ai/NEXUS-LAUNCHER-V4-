@@ -21,6 +21,7 @@
         <Button android:id="@+id/hub_btn_shaders" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Shaders"/>
         <Button android:id="@+id/hub_btn_servers" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Server hosting"/>
         <Button android:id="@+id/hub_btn_plugins" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Server plugins"/>
+        <Button android:id="@+id/hub_btn_perf" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Performance Lab"/>
         <Button android:id="@+id/hub_btn_voice" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Friends / Voice"/>
         <Button android:id="@+id/hub_btn_accounts" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Accounts"/>
         <Button android:id="@+id/hub_btn_settings" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Settings"/>

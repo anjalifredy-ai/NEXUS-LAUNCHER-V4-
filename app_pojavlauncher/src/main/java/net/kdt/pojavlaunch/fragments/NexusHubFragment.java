@@ -45,6 +45,8 @@ public class NexusHubFragment extends Fragment {
         setNav(view, R.id.hub_btn_plugins, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("plugin").getArguments()));
+        setNav(view, R.id.hub_btn_perf, () ->
+                Tools.swapFragment(requireActivity(), PerformanceLabFragment.class, PerformanceLabFragment.TAG, null));
         setNav(view, R.id.hub_btn_profiles, () ->
                 Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class, ProfileTypeSelectFragment.TAG, null));
         setNav(view, R.id.hub_btn_accounts, () ->

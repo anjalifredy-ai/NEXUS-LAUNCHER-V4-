@@ -26,28 +26,29 @@ public class NexusHubFragment extends Fragment {
         String serverStatus = ServerController.get().isRunning()
                 ? (ServerController.get().isReady() ? "Server: READY" : "Server: RUNNING")
                 : "Server: stopped";
-        status.setText(serverStatus + "\nAll destinations below are live screens.");
+        status.setText(serverStatus + "\nNexus Launcher V4 · unified libraries");
 
         setNav(view, R.id.hub_btn_mods, () ->
-                Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
-                        SearchModFragment.newInstance("mod").getArguments()));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("mod").getArguments()));
         setNav(view, R.id.hub_btn_installed_mods, () ->
-                Tools.swapFragment(requireActivity(), InstalledModsFragment.class, InstalledModsFragment.TAG, null));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("mod").getArguments()));
         setNav(view, R.id.hub_btn_modpacks, () ->
                 Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
                         SearchModFragment.newInstance("modpack").getArguments()));
         setNav(view, R.id.hub_btn_resourcepacks, () ->
-                Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
-                        SearchModFragment.newInstance("resourcepack").getArguments()));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("resourcepack").getArguments()));
         setNav(view, R.id.hub_btn_installed_rp, () ->
-                Tools.swapFragment(requireActivity(), InstalledPacksFragment.class, InstalledPacksFragment.TAG,
-                        InstalledPacksFragment.newInstance("resourcepacks").getArguments()));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("resourcepack").getArguments()));
         setNav(view, R.id.hub_btn_shaders, () ->
-                Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
-                        SearchModFragment.newInstance("shader").getArguments()));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("shader").getArguments()));
         setNav(view, R.id.hub_btn_installed_shaders, () ->
-                Tools.swapFragment(requireActivity(), InstalledPacksFragment.class, InstalledPacksFragment.TAG,
-                        InstalledPacksFragment.newInstance("shaderpacks").getArguments()));
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("shader").getArguments()));
         setNav(view, R.id.hub_btn_servers, () ->
                 Tools.swapFragment(requireActivity(), ServerManagerFragment.class, ServerManagerFragment.TAG, null));
         setNav(view, R.id.hub_btn_multiplayer, () ->

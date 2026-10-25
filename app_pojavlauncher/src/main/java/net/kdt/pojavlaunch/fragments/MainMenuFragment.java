@@ -85,8 +85,8 @@ public class MainMenuFragment extends Fragment {
         View.OnClickListener openHub = v ->
                 Tools.swapFragment(requireActivity(), NexusHubFragment.class, NexusHubFragment.TAG, null);
         View.OnClickListener openMods = v ->
-                Tools.swapFragment(requireActivity(), SearchModFragment.class, SearchModFragment.TAG,
-                        SearchModFragment.newInstance("mod").getArguments());
+                Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
+                        ContentLibraryFragment.newInstance("mod").getArguments());
         View.OnClickListener openPerf = v ->
                 Tools.swapFragment(requireActivity(), PerformanceLabFragment.class, PerformanceLabFragment.TAG, null);
         View.OnClickListener openSettings = v ->

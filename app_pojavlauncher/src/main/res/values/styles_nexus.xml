@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Nexus" parent="@android:style/Theme.DeviceDefault"/>
+
     <style name="Nexus.Card">
         <item name="android:background">@color/nexus_card</item>
         <item name="android:padding">12dp</item>

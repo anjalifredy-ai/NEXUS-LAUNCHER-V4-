@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="main_play">Play</string>
-    <string name="main_share_logs">Share log file</string>
-    <string name="main_install_jar_file">Execute a .jar</string>
     <string name="main_add_account">Add account</string>
     <string name="main_login_done">Login done</string>
     <string name="create_profile">Create new profile</string>
     <string name="no_saved_accounts">No saved accounts</string>
     <string name="tasks_ongoing">Tasks are in progress, please wait</string>
     <string name="discord_invite" translatable="false">https://discord.com/invite/aenk3EUvER</string>
-    <string name="mcl_button_discord">Discord</string>
-    <string name="mcl_button_open_directory">Open game directory</string>
     <string name="lazy_service_default_title">Nexus Foreground Service</string>
     <string name="storage_required">Nexus Launcher requires external storage to be attached. Please reconnect it and restart the app.</string>
     <string name="notification_game_runs">The game is running!</string>
@@ -30,4 +25,7 @@
     <string name="xerr_child">Your account is a child account, and needs to be added into a Family in order to log in.</string>
     <string name="xerr_not_available">Xbox Live is not available in your country</string>
     <string name="quick_setting_title">Quick settings</string>
+    <string name="mcl_setting_renderer_gles2_4">Holy GL4ES - (all versions, fast)</string>
+    <string name="mcl_setting_renderer_vulkan_zink">Zink (Vulkan) - (all versions, mid)</string>
+    <string name="mcl_setting_renderer_ltw">LTW - (experimental)</string>
 </resources>

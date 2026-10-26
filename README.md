@@ -133,3 +133,16 @@ Any code change to this repository (or iOS) should be submitted as a pull reques
 - [libepoxy](https://github.com/anholt/libepoxy): [MIT License](https://github.com/anholt/libepoxy/blob/master/COPYING).
 - [virglrenderer](https://github.com/PojavLauncherTeam/virglrenderer): [MIT License](https://gitlab.freedesktop.org/virgl/virglrenderer/-/blob/master/COPYING).
 - Thanks to [MCHeads](https://mc-heads.net) for providing Minecraft avatars.
+
+
+
+FEATURES 
+WE have given many killer features like
+• Server hosting from your own Mobile 24/7
+• In launcher mods resources shader packs browsing 
+• Many skins and cosmetics 
+• in game mods browsing 
+• Better optimization 
+• Server hosting software paper fabric and etc
+• EULA ACCEPT
+• Unlimited server hosting 

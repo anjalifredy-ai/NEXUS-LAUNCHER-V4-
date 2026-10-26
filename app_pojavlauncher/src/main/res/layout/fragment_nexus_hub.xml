@@ -15,6 +15,7 @@
             android:textColor="@color/nexus_text_secondary" android:textSize="12sp" android:paddingBottom="10dp"/>
         <Button android:id="@+id/hub_btn_home" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Home"/>
         <Button android:id="@+id/hub_btn_profiles" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Profiles / Loaders"/>
+        <Button android:id="@+id/hub_btn_versions" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Version Manager"/>
         <Button android:id="@+id/hub_btn_mods" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mods Library"/>
         <Button android:id="@+id/hub_btn_installed_mods" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Installed Mods"/>
         <Button android:id="@+id/hub_btn_modpacks" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Modpacks"/>
@@ -22,9 +23,9 @@
         <Button android:id="@+id/hub_btn_installed_rp" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Installed Resource packs"/>
         <Button android:id="@+id/hub_btn_shaders" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Shaders"/>
         <Button android:id="@+id/hub_btn_installed_shaders" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Installed Shaders"/>
-        <Button android:id="@+id/hub_btn_servers" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Server hosting (on-device)"/>
+        <Button android:id="@+id/hub_btn_servers" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Server hosting"/>
         <Button android:id="@+id/hub_btn_multiplayer" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Multiplayer server list"/>
-        <Button android:id="@+id/hub_btn_plugins" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Server plugins (Modrinth)"/>
+        <Button android:id="@+id/hub_btn_plugins" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Server plugins"/>
         <Button android:id="@+id/hub_btn_perf" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Performance Lab"/>
         <Button android:id="@+id/hub_btn_diag" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Diagnostics"/>
         <Button android:id="@+id/hub_btn_voice" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Friends / Voice"/>

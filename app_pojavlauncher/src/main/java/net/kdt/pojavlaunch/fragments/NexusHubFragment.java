@@ -26,8 +26,10 @@ public class NexusHubFragment extends Fragment {
         String serverStatus = ServerController.get().isRunning()
                 ? (ServerController.get().isReady() ? "Server: READY" : "Server: RUNNING")
                 : "Server: stopped";
-        status.setText(serverStatus + "\nNexus Launcher V4 · real data destinations");
+        status.setText(serverStatus + "\nNexus Launcher V4");
 
+        setNav(view, R.id.hub_btn_versions, () ->
+                Tools.swapFragment(requireActivity(), VersionBrowserFragment.class, VersionBrowserFragment.TAG, null));
         setNav(view, R.id.hub_btn_mods, () ->
                 Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
                         ContentLibraryFragment.newInstance("mod").getArguments()));

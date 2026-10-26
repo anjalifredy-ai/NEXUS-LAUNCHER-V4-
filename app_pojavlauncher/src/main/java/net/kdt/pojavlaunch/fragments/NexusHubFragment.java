@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.server.ServerController;
 
 public class NexusHubFragment extends Fragment {
@@ -73,7 +72,7 @@ public class NexusHubFragment extends Fragment {
         setNav(view, R.id.hub_btn_voice, () ->
                 Tools.swapFragment(requireActivity(), FriendsVoiceFragment.class, FriendsVoiceFragment.TAG, null));
         setNav(view, R.id.hub_btn_settings, () ->
-                Tools.swapFragment(requireActivity(), LauncherPreferenceFragment.class, "SETTINGS_FRAGMENT", null));
+                Tools.swapFragment(requireActivity(), SettingsHubFragment.class, SettingsHubFragment.TAG, null));
         setNav(view, R.id.hub_btn_home, () -> Tools.backToMainMenu(requireActivity()));
     }
 

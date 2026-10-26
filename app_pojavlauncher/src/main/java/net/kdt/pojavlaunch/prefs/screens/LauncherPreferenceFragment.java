@@ -23,7 +23,11 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        view.setBackgroundColor(getResources().getColor(R.color.background_app));
+        try {
+            view.setBackgroundColor(getResources().getColor(R.color.nexus_bg));
+        } catch (Exception e) {
+            view.setBackgroundColor(getResources().getColor(R.color.background_app));
+        }
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -38,12 +42,13 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         Activity activity = getActivity();
         if(activity instanceof LauncherActivity) {
             LauncherActivity launcherActivity = (LauncherActivity)activity;
-            mRequestNotificationPermissionPreference.setVisible(!launcherActivity.checkForNotificationPermission());
+            mRequestNotificationPermissionPreference.setVisible(launcherActivity.askForNotificationPermission != null);
             mRequestNotificationPermissionPreference.setOnPreferenceClickListener(preference -> {
-                launcherActivity.askForNotificationPermission(()->mRequestNotificationPermissionPreference.setVisible(false));
+                if(launcherActivity.askForNotificationPermission != null)
+                    launcherActivity.askForNotificationPermission.run();
                 return true;
             });
-        }else{
+        } else {
             mRequestNotificationPermissionPreference.setVisible(false);
         }
     }
@@ -51,31 +56,30 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     @Override
     public void onResume() {
         super.onResume();
-        SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
-        if(sharedPreferences != null) sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onPause() {
-        SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
-        if(sharedPreferences != null) sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         super.onPause();
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences p, String s) {
+    public void onSharedPreferenceChanged(SharedPreferences p, String key) {
         LauncherPreferences.loadPreferences(getContext());
     }
 
-    protected Preference requirePreference(CharSequence key) {
-        Preference preference = findPreference(key);
+    protected Preference requirePreference(String key) {
+        Preference preference = getPreferenceManager().findPreference(key);
         if(preference != null) return preference;
-        throw new IllegalStateException("Preference "+key+" is null");
+        throw new IllegalStateException("Preference " + key + " is null");
     }
+
     @SuppressWarnings("unchecked")
-    protected <T extends Preference> T requirePreference(CharSequence key, Class<T> preferenceClass) {
+    protected <T extends Preference> T requirePreference(String key, Class<T> preferenceClass) {
         Preference preference = requirePreference(key);
         if(preferenceClass.isInstance(preference)) return (T)preference;
-        throw new IllegalStateException("Preference "+key+" is not an instance of "+preferenceClass.getSimpleName());
+        throw new IllegalStateException("Preference " + key + " is not instance of " + preferenceClass.getName());
     }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="multirt_config_setdefault">Set default</string>
+    <string name="preference_deadzone_scale_title">Deadzone scale</string>
+    <string name="preference_deadzone_scale_description">Joystick deadzone scale</string>
+    <string name="preference_force_vsync_title">Force VSync</string>
+    <string name="preference_force_vsync_description">Limit the frame rate to the display refresh rate</string>
+</resources>

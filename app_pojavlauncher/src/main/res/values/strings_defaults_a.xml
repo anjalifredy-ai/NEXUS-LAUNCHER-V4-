@@ -38,7 +38,6 @@
     <string name="profiles_latest_snapshot">Latest snapshot</string>
     <string name="profiles_profile_name">Name</string>
     <string name="profiles_profile_version">Version</string>
-    <string name="global_delete">Delete</string>
     <string name="pedit_renderer">Renderer</string>
     <string name="pedit_java_runtime">Java Runtime</string>
     <string name="pedit_scale_when_changing_resolution">Scale UI when changing resolution</string>

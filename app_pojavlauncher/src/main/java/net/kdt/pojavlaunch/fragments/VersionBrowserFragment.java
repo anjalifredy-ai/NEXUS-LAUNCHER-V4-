@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.profiles.VersionSelectorDialog;
 import net.kdt.pojavlaunch.server.ClientVersionCatalog;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class VersionBrowserFragment extends Fragment {
     private TextView mStatus;
     private ListView mList;
     private List<ClientVersionCatalog.Entry> mAll = new ArrayList<>();
+    private List<ClientVersionCatalog.Entry> mFiltered = new ArrayList<>();
 
     public VersionBrowserFragment() { super(R.layout.fragment_version_browser); }
 
@@ -51,11 +53,24 @@ public class VersionBrowserFragment extends Fragment {
         mSearch.setOnEditorActionListener((v, actionId, event) -> { applyFilter(); return true; });
 
         mList.setOnItemClickListener((parent, v, position, id) -> {
-            Object item = parent.getItemAtPosition(position);
-            if (item != null)
-                Toast.makeText(requireContext(),
-                        "Version: " + item + "\nUse Home profile spinner / profile editor to install & select.",
-                        Toast.LENGTH_LONG).show();
+            if (position < 0 || position >= mFiltered.size()) return;
+            ClientVersionCatalog.Entry e = mFiltered.get(position);
+            Toast.makeText(requireContext(),
+                    e.id + (e.installed ? " (installed)" : " — open selector to install via engine"),
+                    Toast.LENGTH_SHORT).show();
+            try {
+                VersionSelectorDialog.open(requireContext(), false, (version, snapshot) ->
+                        Toast.makeText(requireContext(),
+                                "Selected " + version + " — set it on a profile from Home spinner / Profiles, then Play downloads assets.",
+                                Toast.LENGTH_LONG).show());
+            } catch (Exception ex) {
+                Toast.makeText(requireContext(), "Use Home → profile editor to install " + e.id, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        mList.setOnItemLongClickListener((parent, v, position, id) -> {
+            Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class, ProfileTypeSelectFragment.TAG, null);
+            return true;
         });
 
         load(false);
@@ -68,7 +83,6 @@ public class VersionBrowserFragment extends Fragment {
                 List<ClientVersionCatalog.Entry> list = ClientVersionCatalog.load(force);
                 Tools.runOnUiThread(() -> {
                     mAll = list;
-                    mStatus.setText(list.size() + " versions from official manifest");
                     applyFilter();
                 });
             } catch (Exception e) {
@@ -78,17 +92,17 @@ public class VersionBrowserFragment extends Fragment {
     }
 
     private void applyFilter() {
-        List<ClientVersionCatalog.Entry> filtered = ClientVersionCatalog.filter(
+        mFiltered = ClientVersionCatalog.filter(
                 mAll,
                 mSearch.getText() != null ? mSearch.getText().toString() : "",
                 mRelease.isChecked(),
                 mSnapshot.isChecked(),
                 mInstalled.isChecked());
         List<String> labels = new ArrayList<>();
-        for (ClientVersionCatalog.Entry e : filtered) {
+        for (ClientVersionCatalog.Entry e : mFiltered) {
             labels.add((e.installed ? "[IN] " : "[  ] ") + e.id + " · " + e.type);
         }
         mList.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, labels));
-        mStatus.setText(filtered.size() + " shown · " + mAll.size() + " total");
+        mStatus.setText(mFiltered.size() + " shown · " + mAll.size() + " total · tap = engine selector · long-press = Profiles/loaders");
     }
 }

@@ -21,11 +21,14 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.server.AdaptiveRamManager;
 import net.kdt.pojavlaunch.server.LanNetworkHelper;
 import net.kdt.pojavlaunch.server.PublicAccessManager;
+import net.kdt.pojavlaunch.server.ServerCommandHints;
 import net.kdt.pojavlaunch.server.ServerController;
 import net.kdt.pojavlaunch.server.ServerProfile;
+import net.kdt.pojavlaunch.server.ServerVersionCatalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class ServerManagerFragment extends Fragment implements ServerController.Listener {
     public static final String TAG = "ServerManagerFragment";
@@ -107,6 +110,10 @@ public class ServerManagerFragment extends Fragment implements ServerController.
         view.findViewById(R.id.server_btn_refresh_ram).setOnClickListener(v -> updateRam());
         view.findViewById(R.id.server_btn_delete).setOnClickListener(v -> confirmDelete());
         view.findViewById(R.id.server_btn_back).setOnClickListener(v -> Tools.backToMainMenu(requireActivity()));
+        View pick = view.findViewById(R.id.server_btn_pick_version);
+        if (pick != null) pick.setOnClickListener(v -> pickVersion());
+        View hints = view.findViewById(R.id.server_btn_hints);
+        if (hints != null) hints.setOnClickListener(v -> showCommandHints());
 
         mProfileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -265,6 +272,60 @@ public class ServerManagerFragment extends Fragment implements ServerController.
     private void updatePublic() {
         PublicAccessManager.Snapshot s = ServerController.get().publicAccess().getSnapshot();
         mPublicInfo.setText(s.message != null ? s.message : ("Public: " + s.status));
+    }
+
+    private void pickVersion() {
+        toast("Loading versions…");
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                ServerProfile.Software soft = ServerProfile.Software.VANILLA;
+                if (mFabric != null && mFabric.isChecked()) soft = ServerProfile.Software.FABRIC;
+                else if (mPaper != null && mPaper.isChecked()) soft = ServerProfile.Software.PAPER;
+                final java.util.List<String> ids = new java.util.ArrayList<>();
+                if (soft == ServerProfile.Software.PAPER) {
+                    ids.addAll(ServerVersionCatalog.listPaperVersions());
+                } else if (soft == ServerProfile.Software.FABRIC) {
+                    for (ServerVersionCatalog.VersionEntry e : ServerVersionCatalog.listFabricGameVersions(true))
+                        ids.add(e.id);
+                } else {
+                    for (ServerVersionCatalog.VersionEntry e : ServerVersionCatalog.listVanillaReleases(false))
+                        ids.add(e.id);
+                }
+                if (ids.size() > 80) ids.subList(80, ids.size()).clear();
+                Tools.runOnUiThread(() -> {
+                    if (ids.isEmpty()) { toast("No versions returned"); return; }
+                    String[] arr = ids.toArray(new String[0]);
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle("Select Minecraft version")
+                            .setItems(arr, (d, which) -> mVersion.setText(arr[which]))
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show();
+                });
+            } catch (Exception e) {
+                Tools.runOnUiThread(() -> toast("Version list failed: " + e.getMessage()));
+            }
+        });
+    }
+
+    private void showCommandHints() {
+        ServerProfile.Software soft = ServerProfile.Software.VANILLA;
+        if (mFabric != null && mFabric.isChecked()) soft = ServerProfile.Software.FABRIC;
+        else if (mPaper != null && mPaper.isChecked()) soft = ServerProfile.Software.PAPER;
+        java.util.List<String> hints = ServerCommandHints.forSoftware(soft);
+        String[] arr = hints.toArray(new String[0]);
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Send command")
+                .setItems(arr, (d, which) -> {
+                    mCommand.setText(arr[which]);
+                    try {
+                        ServerController.get().sendCommand(arr[which]);
+                        toast("Sent: " + arr[which]);
+                    } catch (Exception e) {
+                        toast(e.getMessage());
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void toast(String m) {

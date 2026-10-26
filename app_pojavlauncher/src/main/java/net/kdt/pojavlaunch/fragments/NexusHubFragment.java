@@ -30,6 +30,8 @@ public class NexusHubFragment extends Fragment {
 
         setNav(view, R.id.hub_btn_versions, () ->
                 Tools.swapFragment(requireActivity(), VersionBrowserFragment.class, VersionBrowserFragment.TAG, null));
+        setNav(view, R.id.hub_btn_downloads, () ->
+                Tools.swapFragment(requireActivity(), DownloadsFragment.class, DownloadsFragment.TAG, null));
         setNav(view, R.id.hub_btn_mods, () ->
                 Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
                         ContentLibraryFragment.newInstance("mod").getArguments()));
@@ -51,6 +53,8 @@ public class NexusHubFragment extends Fragment {
         setNav(view, R.id.hub_btn_installed_shaders, () ->
                 Tools.swapFragment(requireActivity(), ContentLibraryFragment.class, ContentLibraryFragment.TAG,
                         ContentLibraryFragment.newInstance("shader").getArguments()));
+        setNav(view, R.id.hub_btn_server_list, () ->
+                Tools.swapFragment(requireActivity(), ServerListFragment.class, ServerListFragment.TAG, null));
         setNav(view, R.id.hub_btn_servers, () ->
                 Tools.swapFragment(requireActivity(), ServerManagerFragment.class, ServerManagerFragment.TAG, null));
         setNav(view, R.id.hub_btn_multiplayer, () ->

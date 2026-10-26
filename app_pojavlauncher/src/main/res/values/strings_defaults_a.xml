@@ -1,1 +1,55 @@
-PLACEHOLDER
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="toast_3">Exit</string>
+    <string name="mcl_setting_renderer_angle">ANGLE (Vulkan) - (1.17+ only, mid)</string>
+    <string name="mcl_memory_allocation">Memory allocation</string>
+    <string name="mcl_memory_allocation_subtitle">Controls how much memory is given to Minecraft.</string>
+    <string name="multirt_runtime_corrupt">Corrupted Java Runtime</string>
+    <string name="multirt_runtime_incompatible">Incompatible architecture</string>
+    <string name="multirt_config_title">Java Runtimes</string>
+    <string name="multirt_config_add">Install new</string>
+    <string name="multirt_title">Select Java Runtime</string>
+    <string name="multirt_subtitle">Selected Minecraft version requires Java %d</string>
+    <string name="multirt_progress">Unpacking the new Java Runtime…</string>
+    <string name="multirt_no_java">No compatible Java Runtime found for Minecraft %s. Please install one.</string>
+    <string name="install_dl_dialog_title">Select version type</string>
+    <string name="fabric_dl_progress">Reading loader metadata…</string>
+    <string name="forge_dl_progress">Reading installer data for %s…</string>
+    <string name="forge_dl_searching">Searching for installer version…</string>
+    <string name="modpack_download_downloading_mods">Downloading mods (%d/%d)</string>
+    <string name="modpack_download_downloading_mods_fc">Downloading mods (File %d/%d: %s)</string>
+    <string name="modpack_download_downloading_metadata">Downloading modpack metadata…</string>
+    <string name="modpack_download_applying_overrides">Applying overrides (%d/%d)</string>
+    <string name="modpack_install_notification_success">Click here to finish the install</string>
+    <string name="modpack_install_notification_data_not_available">Failed to download the data required to continue the installation</string>
+    <string name="modpack_install_current_progress">Progress: %d%%</string>
+    <string name="modloader_dl_failed_to_install">Failed to install the mod loader</string>
+    <string name="hint_search_modpack">Search for Modrinth modpacks</string>
+    <string name="preference_mouse_start_title">Start with virtual mouse on</string>
+    <string name="preference_video_title">Video and renderer</string>
+    <string name="preference_control_title">Control settings</string>
+    <string name="preference_java_title">Java tweaks</string>
+    <string name="preference_misc_title">Miscellaneous settings</string>
+    <string name="preference_experimental_title">Experimental stuff</string>
+    <string name="preference_sustained_performance_title">Enable sustained performance mode</string>
+    <string name="preference_sustained_performance_description">Limit thermal throttling by limiting peak performance</string>
+    <string name="unnamed">Unnamed</string>
+    <string name="profiles_latest_release">Latest release</string>
+    <string name="profiles_latest_snapshot">Latest snapshot</string>
+    <string name="profiles_profile_name">Name</string>
+    <string name="profiles_profile_version">Version</string>
+    <string name="global_delete">Delete</string>
+    <string name="pedit_renderer">Renderer</string>
+    <string name="pedit_java_runtime">Java Runtime</string>
+    <string name="pedit_scale_when_changing_resolution">Scale UI when changing resolution</string>
+    <string name="generic_error">Error</string>
+    <string name="newdl_starting">Reading game metadata…</string>
+    <string name="newdl_downloading_metadata">Downloading game metadata (%s)</string>
+    <string name="newdl_downloading_game_files">Downloading game files… (%d/%d)</string>
+    <string name="newdl_downloading_game_files_size">Downloading game files… (%s / %s, %d%%)</string>
+    <string name="newdl_extracting_native_libraries">Extracting native libraries (%d/%d)</string>
+    <string name="search_modpack_no_result">No modpacks found</string>
+    <string name="search_modpack_error">Failed to find modpacks</string>
+    <string name="search_modpack_download_error">Failed to download modpack metadata</string>
+    <string name="progresslayout_tasks_in_progress">%d tasks in progress</string>
+</resources>

@@ -3,11 +3,12 @@ package net.kdt.pojavlaunch.fragments;
 import static net.kdt.pojavlaunch.Tools.openPath;
 import static net.kdt.pojavlaunch.Tools.shareLog;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.kdt.mcgui.MineButton;
 import com.kdt.mcgui.mcVersionSpinner;
 
+import net.kdt.pojavlaunch.CustomControlsActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
@@ -24,6 +26,7 @@ import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
+import net.kdt.pojavlaunch.server.ServerController;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
@@ -60,13 +63,15 @@ public class MainMenuFragment extends Fragment {
 
         if (mCustomControlButton != null)
             mCustomControlButton.setOnClickListener(v ->
-                    Tools.swapFragment(requireActivity(), ControlButtonFragment.class, ControlButtonFragment.TAG, null));
+                    startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
 
         if (mInstallJarButton != null)
             mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation(false));
 
         if (mEditProfileButton != null)
-            mEditProfileButton.setOnClickListener(v -> mVersionSpinner.openProfileEditor(requireActivity()));
+            mEditProfileButton.setOnClickListener(v -> {
+                if (mVersionSpinner != null) mVersionSpinner.openProfileEditor(requireActivity());
+            });
 
         if (mPlayButton != null)
             mPlayButton.setOnClickListener(v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
@@ -87,7 +92,7 @@ public class MainMenuFragment extends Fragment {
         View.OnClickListener openPerf = v ->
                 Tools.swapFragment(requireActivity(), PerformanceLabFragment.class, PerformanceLabFragment.TAG, null);
         View.OnClickListener openSettings = v ->
-                Tools.swapFragment(requireActivity(), LauncherPreferenceFragment.class, "SETTINGS_FRAGMENT", null);
+                Tools.swapFragment(requireActivity(), SettingsHubFragment.class, SettingsHubFragment.TAG, null);
         View.OnClickListener openProfiles = v ->
                 Tools.swapFragment(requireActivity(), ProfilesFragment.class, ProfilesFragment.TAG, null);
 
@@ -100,8 +105,16 @@ public class MainMenuFragment extends Fragment {
         bind(view, R.id.nav_mods, openMods);
         bind(view, R.id.nav_settings, openSettings);
 
+        TextView versionLabel = view.findViewById(R.id.nexus_version_label);
+        if (versionLabel != null) {
+            String s = ServerController.get().isRunning()
+                    ? (ServerController.get().isReady() ? "SRV READY" : "SRV ON")
+                    : "Nexus";
+            versionLabel.setText(s);
+        }
+
         ProgressKeeper.waitUntilDone(() -> {
-            /* optional ready hook */
+            if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
         });
     }
 
@@ -113,16 +126,19 @@ public class MainMenuFragment extends Fragment {
     private File getCurrentProfileDirectory() {
         try {
             LauncherProfiles.load();
-            return Tools.getGameDirPath(LauncherProfiles.getCurrentProfile());
+            String currentProfile = LauncherPreferences.DEFAULT_PREF.getString(
+                    LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
+            MinecraftProfile profileObject = LauncherProfiles.mainProfileJson.profiles.get(currentProfile);
+            if (profileObject == null) return new File(Tools.DIR_GAME_NEW);
+            return Tools.getGameDirPath(profileObject);
         } catch (Exception e) {
             return new File(Tools.DIR_GAME_NEW);
         }
     }
 
-    private void runInstallerWithConfirmation(boolean force) {
-        // Prefer existing install-jar path when available
+    private void runInstallerWithConfirmation(boolean isCustomArgs) {
         try {
-            Tools.installMod(requireActivity(), force);
+            Tools.installMod(requireActivity(), isCustomArgs);
         } catch (Throwable t) {
             Toast.makeText(requireContext(), "Install: " + t.getMessage(), Toast.LENGTH_LONG).show();
         }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/nexus_bg" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="12dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Settings" android:textColor="@color/nexus_accent" android:textSize="22sp" android:textStyle="bold"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Organized categories · real preference screens"
+            android:textColor="@color/nexus_text_secondary" android:textSize="12sp" android:paddingBottom="10dp"/>
+        <Button android:id="@+id/sh_general" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="General"/>
+        <Button android:id="@+id/sh_java" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Java Runtime / RAM"/>
+        <Button android:id="@+id/sh_video" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Video / Renderer"/>
+        <Button android:id="@+id/sh_control" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Controls / Input"/>
+        <Button android:id="@+id/sh_misc" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Miscellaneous"/>
+        <Button android:id="@+id/sh_experimental" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Advanced / Experimental"/>
+        <Button android:id="@+id/sh_perf" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Performance Lab"/>
+        <Button android:id="@+id/sh_diag" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Diagnostics"/>
+        <Button android:id="@+id/sh_home" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Home"/>
+    </LinearLayout>
+</ScrollView>

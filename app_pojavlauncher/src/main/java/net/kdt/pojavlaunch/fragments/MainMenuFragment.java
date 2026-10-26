@@ -19,14 +19,15 @@ import com.kdt.mcgui.MineButton;
 import com.kdt.mcgui.mcVersionSpinner;
 
 import net.kdt.pojavlaunch.CustomControlsActivity;
+import net.kdt.pojavlaunch.PojavProfile;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
-import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.server.ServerController;
+import net.kdt.pojavlaunch.value.MinecraftAccount;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
@@ -104,6 +105,17 @@ public class MainMenuFragment extends Fragment {
         bind(view, R.id.nav_profiles, openProfiles);
         bind(view, R.id.nav_mods, openMods);
         bind(view, R.id.nav_settings, openSettings);
+
+        TextView userLabel = view.findViewById(R.id.nexus_username_label);
+        if (userLabel != null) {
+            userLabel.setOnClickListener(v ->
+                    Tools.swapFragment(requireActivity(), SelectAuthFragment.class, SelectAuthFragment.TAG, null));
+            try {
+                MinecraftAccount acc = PojavProfile.getCurrentProfileContent(requireContext(), null);
+                if (acc != null && Tools.isValidString(acc.username))
+                    userLabel.setText(acc.username);
+            } catch (Exception ignored) {}
+        }
 
         TextView versionLabel = view.findViewById(R.id.nexus_version_label);
         if (versionLabel != null) {

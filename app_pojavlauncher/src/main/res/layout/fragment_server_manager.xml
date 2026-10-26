@@ -11,7 +11,7 @@
         android:padding="10dp">
 
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Nexus Server Hosting" android:textColor="@color/nexus_orange"
+            android:text="Nexus Server Hosting" android:textColor="@color/nexus_accent"
             android:textSize="18sp" android:textStyle="bold"/>
 
         <TextView android:id="@+id/server_status" android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -28,7 +28,11 @@
         <EditText android:id="@+id/server_name" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:hint="Server name" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
         <EditText android:id="@+id/server_version" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:hint="Minecraft version e.g. 1.20.4" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
+            android:hint="Minecraft version (or Pick)" android:textColor="@color/nexus_text_primary" android:textColorHint="@color/nexus_text_muted"/>
+        <Button android:id="@+id/server_btn_pick_version" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Pick version from official list"/>
+        <Button android:id="@+id/server_btn_hints" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Command suggestions"/>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
             <EditText android:id="@+id/server_port" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
                 android:hint="Port" android:inputType="number" android:textColor="@color/nexus_text_primary"/>
@@ -45,7 +49,7 @@
         <CheckBox android:id="@+id/server_use_fabric" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:text="Fabric Server (mods)" android:textColor="@color/nexus_text_primary"/>
         <CheckBox android:id="@+id/server_offline" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Offline-mode (local accounts; insecure if public)" android:textColor="@color/nexus_text_primary"
+            android:text="Offline-mode (insecure if public)" android:textColor="@color/nexus_text_primary"
             android:checked="true"/>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">

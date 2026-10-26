@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/nexus_bg" android:padding="12dp">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Downloads / Activity" android:textColor="@color/nexus_accent"
+        android:textSize="18sp" android:textStyle="bold"/>
+    <TextView android:id="@+id/dl_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="@color/nexus_text_secondary" android:textSize="13sp" android:paddingTop="6dp" android:paddingBottom="8dp"/>
+    <TextView android:id="@+id/dl_detail" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:textColor="@color/nexus_text_primary" android:textSize="12sp"
+        android:background="@color/nexus_card" android:padding="12dp"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="8dp">
+        <Button android:id="@+id/dl_refresh" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Refresh"/>
+        <Button android:id="@+id/dl_mods" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Mods"/>
+        <Button android:id="@+id/dl_versions" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Versions"/>
+        <Button android:id="@+id/dl_home" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Home"/>
+    </LinearLayout>
+</LinearLayout>

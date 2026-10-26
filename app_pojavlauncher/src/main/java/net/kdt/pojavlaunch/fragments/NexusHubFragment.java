@@ -67,7 +67,7 @@ public class NexusHubFragment extends Fragment {
         setNav(view, R.id.hub_btn_diag, () ->
                 Tools.swapFragment(requireActivity(), DiagnosticsFragment.class, DiagnosticsFragment.TAG, null));
         setNav(view, R.id.hub_btn_profiles, () ->
-                Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class, ProfileTypeSelectFragment.TAG, null));
+                Tools.swapFragment(requireActivity(), ProfilesFragment.class, ProfilesFragment.TAG, null));
         setNav(view, R.id.hub_btn_accounts, () ->
                 Tools.swapFragment(requireActivity(), SelectAuthFragment.class, SelectAuthFragment.TAG, null));
         setNav(view, R.id.hub_btn_voice, () ->

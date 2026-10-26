@@ -64,23 +64,20 @@ public final class ServerInstaller {
                 break;
             }
         }
-        if (versionUrl == null) throw new Exception("Minecraft version not found: " + profile.mcVersion);
+        if (versionUrl == null) throw new Exception("Unknown Minecraft version: " + profile.mcVersion);
         if (progress != null) progress.onStatus("Fetching version metadata");
         JsonObject versionJson = JsonParser.parseString(DownloadUtils.downloadString(versionUrl)).getAsJsonObject();
-        JsonObject downloads = versionJson.getAsJsonObject("downloads");
-        if (downloads == null || !downloads.has("server"))
+        if (!versionJson.has("downloads") || !versionJson.getAsJsonObject("downloads").has("server"))
             throw new Exception("No official server jar for " + profile.mcVersion);
-        JsonObject server = downloads.getAsJsonObject("server");
+        JsonObject server = versionJson.getAsJsonObject("downloads").getAsJsonObject("server");
         String url = server.get("url").getAsString();
         String sha1 = server.has("sha1") ? server.get("sha1").getAsString() : null;
         File jar = profile.serverJar(root);
-        if (progress != null) progress.onStatus("Downloading Vanilla server.jar");
+        if (progress != null) progress.onStatus("Downloading vanilla server.jar");
         DownloadUtils.downloadFile(url, jar);
-        if (sha1 != null && !sha1.isEmpty()) {
-            if (!sha1.equalsIgnoreCase(hashFile(jar, "SHA-1"))) {
-                jar.delete();
-                throw new Exception("SHA-1 mismatch for server.jar");
-            }
+        if (sha1 != null && !sha1.equalsIgnoreCase(hashFile(jar, "SHA-1"))) {
+            jar.delete();
+            throw new Exception("SHA-1 mismatch for server.jar");
         }
         profile.softwareBuild = "";
         Log.i(TAG, "Installed vanilla server");
@@ -88,40 +85,26 @@ public final class ServerInstaller {
 
     private static void installPaper(ServerProfile profile, File root, Progress progress) throws Exception {
         String ver = profile.mcVersion;
-        if (progress != null) progress.onStatus("Querying PaperMC builds for " + ver);
-        String buildsUrl = "https://api.papermc.io/v2/projects/paper/versions/" + ver + "/builds";
-        JsonObject buildsJson;
+        if (progress != null) progress.onStatus("Querying Paper (fill API v3) for " + ver);
+        ServerVersionCatalog.PaperBuild build;
         try {
-            buildsJson = JsonParser.parseString(DownloadUtils.downloadString(buildsUrl)).getAsJsonObject();
+            build = ServerVersionCatalog.latestPaperBuild(ver);
         } catch (Exception e) {
             throw new Exception("Paper unavailable for " + ver + ": " + e.getMessage());
         }
-        JsonArray builds = buildsJson.getAsJsonArray("builds");
-        if (builds == null || builds.size() == 0) throw new Exception("No Paper builds for " + ver);
-        JsonObject chosen = builds.get(builds.size() - 1).getAsJsonObject();
-        if (profile.softwareBuild != null && !profile.softwareBuild.isEmpty()) {
-            int want = Integer.parseInt(profile.softwareBuild);
-            chosen = null;
-            for (JsonElement el : builds) {
-                JsonObject b = el.getAsJsonObject();
-                if (b.get("build").getAsInt() == want) { chosen = b; break; }
-            }
-            if (chosen == null) throw new Exception("Paper build " + want + " not found");
-        }
-        int build = chosen.get("build").getAsInt();
-        JsonObject application = chosen.getAsJsonObject("downloads").getAsJsonObject("application");
-        String fileName = application.get("name").getAsString();
-        String sha256 = application.has("sha256") ? application.get("sha256").getAsString() : null;
-        String url = "https://api.papermc.io/v2/projects/paper/versions/" + ver + "/builds/" + build + "/downloads/" + fileName;
+        profile.softwareBuild = String.valueOf(build.build);
         File jar = profile.serverJar(root);
-        if (progress != null) progress.onStatus("Downloading Paper build " + build);
-        DownloadUtils.downloadFile(url, jar);
-        if (sha256 != null && !sha256.equalsIgnoreCase(hashFile(jar, "SHA-256"))) {
+        if (progress != null) progress.onStatus("Downloading Paper build " + build.build);
+        DownloadUtils.downloadFile(build.downloadUrl, jar);
+        if (build.sha256 != null && !build.sha256.equalsIgnoreCase(hashFile(jar, "SHA-256"))) {
             jar.delete();
             throw new Exception("SHA-256 mismatch for paper.jar");
         }
-        profile.softwareBuild = String.valueOf(build);
-        Log.i(TAG, "Installed Paper build " + build);
+        if (!jar.isFile() || jar.length() < 1000) {
+            jar.delete();
+            throw new Exception("Paper jar missing or too small");
+        }
+        Log.i(TAG, "Installed Paper build " + build.build + " for " + ver);
     }
 
     private static void installFabric(ServerProfile profile, File root, Progress progress) throws Exception {

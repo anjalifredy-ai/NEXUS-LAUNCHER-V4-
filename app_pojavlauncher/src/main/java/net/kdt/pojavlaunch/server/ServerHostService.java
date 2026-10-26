@@ -31,6 +31,7 @@ public class ServerHostService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && ACTION_STOP.equals(intent.getAction())) {
+            try { ServerController.get().stopAsync(getApplicationContext()); } catch (Throwable ignored) {}
             stopForeground(true);
             stopSelf();
             return START_NOT_STICKY;

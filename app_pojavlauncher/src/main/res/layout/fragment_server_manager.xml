@@ -66,7 +66,11 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
             <Button android:id="@+id/server_btn_public" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Public info"/>
             <Button android:id="@+id/server_btn_backup" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Backup"/>
+            <Button android:id="@+id/server_btn_list_backups" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Backups"/>
             <Button android:id="@+id/server_btn_refresh_ram" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="RAM"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/server_btn_clear_console" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Clear log"/>
             <Button android:id="@+id/server_btn_back" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Home"/>
         </LinearLayout>
 

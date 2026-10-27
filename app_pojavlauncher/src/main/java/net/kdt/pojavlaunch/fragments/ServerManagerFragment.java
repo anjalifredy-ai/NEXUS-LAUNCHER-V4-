@@ -25,6 +25,7 @@ import net.kdt.pojavlaunch.server.ServerCommandHints;
 import net.kdt.pojavlaunch.server.ServerController;
 import net.kdt.pojavlaunch.server.ServerProfile;
 import net.kdt.pojavlaunch.server.ServerVersionCatalog;
+import net.kdt.pojavlaunch.server.WorldBackupManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,10 @@ public class ServerManagerFragment extends Fragment implements ServerController.
                 }
             });
         });
+        View listBackups = view.findViewById(R.id.server_btn_list_backups);
+        if (listBackups != null) listBackups.setOnClickListener(v -> showBackups());
+        View clearConsole = view.findViewById(R.id.server_btn_clear_console);
+        if (clearConsole != null) clearConsole.setOnClickListener(v -> mConsole.setText(""));
         view.findViewById(R.id.server_btn_send).setOnClickListener(v -> {
             try {
                 ServerController.get().sendCommand(mCommand.getText().toString());
@@ -168,6 +173,41 @@ public class ServerManagerFragment extends Fragment implements ServerController.
                         refreshSpinner();
                         toast("Deleted");
                     } catch (Exception e) { toast(e.getMessage()); }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showBackups() {
+        ServerProfile p = selected();
+        if (p == null) { toast("No profile"); return; }
+        List<WorldBackupManager.BackupEntry> entries = WorldBackupManager.list(p);
+        if (entries.isEmpty()) {
+            toast("No backups yet — use Backup after a world is generated");
+            return;
+        }
+        String[] labels = new String[entries.size()];
+        for (int i = 0; i < entries.size(); i++) {
+            WorldBackupManager.BackupEntry e = entries.get(i);
+            labels[i] = e.name + " · " + (e.sizeBytes / 1024) + " KB";
+        }
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Backups")
+                .setItems(labels, (d, which) -> {
+                    WorldBackupManager.BackupEntry e = entries.get(which);
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle("Restore backup?")
+                            .setMessage("Stop the server first. Current world will be moved aside.\n" + e.name)
+                            .setPositiveButton("Restore", (d2, w2) -> {
+                                try {
+                                    WorldBackupManager.restore(p, e.file);
+                                    toast("Restored " + e.name);
+                                } catch (Exception ex) {
+                                    toast(ex.getMessage());
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show();
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
@@ -347,6 +387,9 @@ public class ServerManagerFragment extends Fragment implements ServerController.
         Tools.runOnUiThread(() -> {
             mConsole.append(line);
             mConsole.append("\n");
+            final int scrollAmount = mConsole.getLayout() == null ? 0
+                    : mConsole.getLayout().getLineTop(mConsole.getLineCount()) - mConsole.getHeight();
+            if (scrollAmount > 0) mConsole.scrollTo(0, scrollAmount);
         });
     }
 
